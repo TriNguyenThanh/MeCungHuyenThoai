@@ -4,6 +4,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
 	std::cout << "Hello";
 	std::cout << "Bien hello";
+	std::cout << "MinhTu Helllo";
 	std::cout << "123";
 	return 0;
 }
