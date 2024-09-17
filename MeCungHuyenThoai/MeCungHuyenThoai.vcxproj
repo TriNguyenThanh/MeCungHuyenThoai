@@ -104,10 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)SDL2_lib\SDL2_image-2.8.2\include;$(SolutionDir)SDL2_lib\SDL2_mixer-2.8.0\include;$(SolutionDir)SDL2_lib\SDL2_ttf-2.22.0\include;$(SolutionDir)\SDL2_lib\SDL2-2.30.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SDL2_lib\SDL2-2.30.7\lib\x64;$(SolutionDir)SDL2_lib\SDL2_image-2.8.2\lib\x64;$(SolutionDir)SDL2_lib\SDL2_mixer-2.8.0\lib\x64;$(SolutionDir)SDL2_lib\SDL2_ttf-2.22.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
