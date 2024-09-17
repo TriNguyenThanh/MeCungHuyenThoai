@@ -1,10 +1,6 @@
-#include <iostream>
+#include "SDL.h"
 
-int main() {
-	std::cout << "hello world\n";
-	std::cout << "update\n";
+int main(int argc, char* argv[]) {
 
-	std::cout << "hello world\t";
-	std::cout << "OOP updtae";
 	return 0;
 }
