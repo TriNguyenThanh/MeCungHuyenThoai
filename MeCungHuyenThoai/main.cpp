@@ -1,8 +1,13 @@
+// TEST SDL2.0 VISUAL STUDIO //
+
+
 #include "function.h"
 #include "BaseObject.h"
+#include "Map.h"
+#include "FpsControl.h"
 
-BaseObject background_;
-
+GameMap game_map;
+BaseObject charactor;
 bool init() {
 	bool success = true;
 	// chuan bi moi truong tao cua so, render, am thanh
@@ -11,24 +16,24 @@ bool init() {
 		success = false;
 	else
 	{
-		// 1 la khu rang cua
+		// khu rang cua
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
 		//tao cua so
-		g_window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HIGHT, SDL_WINDOW_SHOWN);
+		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HIGHT, SDL_WINDOW_SHOWN);
 
-		if (g_window == nullptr)
+		if (window == nullptr)
 			success = false;
 		else
 		{
-			// tao khoi tao screen control de ve object
-			g_screen = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED);
-			if (g_screen == NULL)
+			// khoi tao screen control de ve object
+			screen = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+			if (screen == NULL)
 				success = false;
 			else
 			{
 
-				SDL_SetRenderDrawColor(g_screen, Render_Draw_Color, Render_Draw_Color, Render_Draw_Color, Render_Draw_Color);
+				SDL_SetRenderDrawColor(screen, Render_Draw_Color, Render_Draw_Color, Render_Draw_Color, Render_Draw_Color);
 				int imgFlag = IMG_INIT_PNG;
 				if (!(IMG_Init(imgFlag) && imgFlag))
 					success = false;
@@ -37,26 +42,50 @@ bool init() {
 	}
 
 	return success;
-}	
-
-bool loadBackground() {
-	return background_.loadImg();
 }
 
 void close() {
-	background_.free();
 
-	SDL_DestroyRenderer(g_screen);
-	g_screen = NULL;
+	SDL_DestroyRenderer(screen); //giai phong screen control
+	screen = NULL;
 
-	SDL_DestroyWindow(g_window);
-	g_window = NULL;
+	SDL_DestroyWindow(window); //giai phong window control
+	window = NULL;
 
 	IMG_Quit();
 	SDL_Quit();
 }
 
 int main(int argc, char* argv[]) {
-	
+
+	if (init() == false) return -1;				// khoi tao game
+	bool ret = game_map.loadMap(screen);
+	if (ret == false) return -1;
+	//if (!charactor.loadImg("assets\\sky\\run_left.png", screen)) return -1;
+
+
+	Timer fpsControl;
+	bool is_quit = false;
+
+	while (!is_quit) {
+
+		while (SDL_PollEvent(&event) != NULL) { // bat su kien nguoi dung
+			if (event.type == SDL_QUIT)
+				is_quit = true;
+		}
+		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, Render_Draw_Color); // mau nen
+		SDL_RenderClear(screen); // clear man hinh
+
+		game_map.DrawMap(screen); // ve background len man hinh
+		charactor.render(screen);
+		SDL_RenderPresent(screen); // update lai man hinh
+
+		//gioi han fps
+		int real_time = fpsControl.get_tick();
+		int time_one_frame = 1000 / FPS;
+		if (real_time < time_one_frame)
+			SDL_Delay(time_one_frame - real_time);
+	}
+
 	return 0;
 }

@@ -24,12 +24,24 @@
     <ClCompile Include="BaseObject.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsControl.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="function.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FpsControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
