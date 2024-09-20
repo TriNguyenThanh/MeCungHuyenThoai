@@ -1,0 +1,74 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "untitled.tmx",
+    "expandedProjectPaths": [
+        "bgr",
+        "."
+    ],
+    "fileStates": {
+        "Background.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "bgr/background.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map_1.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map_2.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "map_2/map_2khong_nen.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "untitled.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 368,
+                "y": 286.5
+            }
+        },
+        "Đá nền.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        }
+    },
+    "last.exportedFilePath": "E:/Game_OOP/MeCungHuyenThoai/assets/envairoment/back-map/map_2",
+    "last.imagePath": "E:/Game_OOP/MeCungHuyenThoai/assets/envairoment/back-map/map_2",
+    "map.height": 15,
+    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 24,
+    "openFiles": [
+        "untitled.tmx",
+        "Đá nền.tsx",
+        "map_2.tsx",
+        "bgr/background.tsx",
+        "map_2/map_2khong_nen.tsx"
+    ],
+    "project": "map_1.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "map_2/map_2khong_nen.tsx",
+        "bgr/background.tsx",
+        "map_2.tsx",
+        "Đá nền.tsx",
+        "untitled.tmx",
+        "Background.tsx",
+        "map_1.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}
