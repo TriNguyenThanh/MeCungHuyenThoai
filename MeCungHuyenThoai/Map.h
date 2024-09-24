@@ -17,7 +17,7 @@ struct MapObject {
 class GameMap {
 private:
 	std::vector <BaseObject> Object;
-	MapObject maplist[9];
+	MapObject maplist[6];
 	int currentMap;
 public:
 	GameMap();
