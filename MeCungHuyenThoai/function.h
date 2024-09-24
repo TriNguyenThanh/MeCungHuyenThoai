@@ -17,8 +17,8 @@ static SDL_Event event;             // user input control
 //screen
 const int SIDE_MENU_WIDTH = 150;
 
-const int SCREEN_WIDTH = 768 + SIDE_MENU_WIDTH;
-const int SCREEN_HIGHT = 480;
+const int SCREEN_WIDTH = 1152 + SIDE_MENU_WIDTH;
+const int SCREEN_HIGHT = 720;
 const int SCREEN_BPP = 32;      //bit per pixel
 
 #define BACKGROUND_COLOR SDL_MapRGB(load_surface->format, 180, 180, 180)
@@ -32,11 +32,20 @@ const int Render_Draw_Color_green = 15;
 const int Render_Draw_Color_blue = 34;
 const int Render_Draw_Color = 0;
 
-#define TILE_SIZE 32
+#define TILE_SIZE 48
 #define TILE_COUNT 20
 #define MAX_MAP_X 24
 #define MAX_MAP_Y 15
 
 #define FPS 60
+
+struct InputType
+{
+	int left;
+	int right;
+	int jump;
+	int shoot;
+	int interact;
+};
 
 #endif // 0
