@@ -39,6 +39,10 @@ const int Render_Draw_Color = 0;
 
 #define FPS 60
 
+#define GRAVITY 0.8
+#define PLAYER_SPEED 4
+#define PLAYER_JUMP 13
+#define CHAR_FRAME 8
 struct InputType
 {
 	int left;

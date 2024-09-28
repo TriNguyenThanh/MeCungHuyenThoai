@@ -22,11 +22,11 @@ private:
 public:
 	GameMap();
 	~GameMap();
-	void setCurrentMap(int x);
+	friend void setCurrentMap(GameMap& gm, int x);
 	int getCurrentMap();
 	bool loadMap(SDL_Renderer* screen);
 	void DrawMap(SDL_Renderer* des);
-	MapObject getMap() const { return maplist[currentMap]; }
+	MapObject getMap() { return maplist[currentMap]; }
 };
 
 #endif // !MAP_H_

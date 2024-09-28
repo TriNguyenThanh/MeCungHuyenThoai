@@ -48,11 +48,20 @@ void close() {
 	SDL_Quit();
 }
 GameMap game_map;
+MainObject player;
+
+
 void start() {
 	if (init() == false) return;				// khoi tao game
 	bool ret = game_map.loadMap(screen);
 	if (ret == false) return;
 
+	player.loadImg("assets\\player\\sky\\run_right - Copy.png", screen);
+	player.setClip();
+	player.setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+
+	/*BaseObject tmp;
+	tmp.loadImg("assets\\player\\sky\\idle.png", screen);*/
 
 	Timer fpsControl;
 	bool is_quit = false;
@@ -62,11 +71,17 @@ void start() {
 		while (SDL_PollEvent(&event) != NULL) { // bat su kien nguoi dung
 			if (event.type == SDL_QUIT)
 				is_quit = true;
+			player.getInput(event, screen);
 		}
 		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, Render_Draw_Color); // mau nen
 		SDL_RenderClear(screen); // clear man hinh
 
-		game_map.DrawMap(screen); // ve background len man hin
+		game_map.DrawMap(screen); // ve background len man hinh
+		MapObject currentMap = game_map.getMap();
+		player.movePlayer(currentMap);
+		player.show(screen);
+		/*tmp.setRect(player.getRect().x - 2*TILE_SIZE, player.getRect().y);
+		tmp.render(screen, NULL);*/
 		SDL_RenderPresent(screen); // update lai man hinh
 
 		//gioi han fps
