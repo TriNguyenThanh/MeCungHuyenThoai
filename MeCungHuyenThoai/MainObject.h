@@ -39,8 +39,8 @@ public:
 	void show(SDL_Renderer* scr);
 	void setClip();
 	void getInput(SDL_Event evn, SDL_Renderer *scr);
-	void movePlayer(MapObject &mapData);
-	void checkHit(MapObject &mapData);
+	void movePlayer(GameMap& game_map);
+	void checkHit(GameMap& game_map);
 };
 
 #endif 

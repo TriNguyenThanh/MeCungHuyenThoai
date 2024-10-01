@@ -18,15 +18,15 @@ class GameMap {
 private:
 	std::vector <BaseObject> Object;
 	MapObject maplist[6];
-	int currentMap;
+	int currentMapIndex;
 public:
 	GameMap();
 	~GameMap();
-	friend void setCurrentMap(GameMap& gm, int x);
+	void setCurrentMap(int x);
 	int getCurrentMap();
 	bool loadMap(SDL_Renderer* screen);
 	void DrawMap(SDL_Renderer* des);
-	MapObject getMap() { return maplist[currentMap]; }
+	MapObject getMap() { return maplist[currentMapIndex]; }
 };
 
 #endif // !MAP_H_

@@ -60,11 +60,10 @@ void start() {
 	player.setClip();
 	player.setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
 
-	/*BaseObject tmp;
-	tmp.loadImg("assets\\player\\sky\\idle.png", screen);*/
-
 	Timer fpsControl;
 	bool is_quit = false;
+	int current_map_index = 1;
+	game_map.setCurrentMap(current_map_index);
 
 	while (!is_quit) {
 
@@ -77,11 +76,8 @@ void start() {
 		SDL_RenderClear(screen); // clear man hinh
 
 		game_map.DrawMap(screen); // ve background len man hinh
-		MapObject currentMap = game_map.getMap();
-		player.movePlayer(currentMap);
+		player.movePlayer(game_map);
 		player.show(screen);
-		/*tmp.setRect(player.getRect().x - 2*TILE_SIZE, player.getRect().y);
-		tmp.render(screen, NULL);*/
 		SDL_RenderPresent(screen); // update lai man hinh
 
 		//gioi han fps

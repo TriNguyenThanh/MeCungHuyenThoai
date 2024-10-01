@@ -1,16 +1,16 @@
 #include "Map.h"
 
 GameMap::GameMap() {
-	currentMap = 0;
+	currentMapIndex = 1;
 }
 GameMap::~GameMap() {
 
 }
 bool GameMap::loadMap(SDL_Renderer* screen) {
-	char file_name[30];
-	for (int i = 0; i < 2; ++i) {
+	char file_name[40];
+	for (int i = 0; i < 3; ++i) {
 
-		sprintf_s(file_name, "assets\\map\\bg0%d - Copy.png", i + 1);
+		sprintf_s(file_name, "assets\\map\\map0%d\\bg0%d - Copy.png", i, i);
 		bool ret = maplist[i].background.loadImg(file_name, screen);
 		if (ret == false) return false;
 		maplist[i].start_x = 0;
@@ -18,7 +18,7 @@ bool GameMap::loadMap(SDL_Renderer* screen) {
 		maplist[i].background.setRect(maplist[i].start_x, maplist[i].start_y);
 
 		FILE* ptr = nullptr;
-		sprintf_s(file_name, "assets\\map\\map0%d.dat", i + 1);
+		sprintf_s(file_name, "assets\\map\\map0%d\\map0%d.dat", i, i);
 		fopen_s(&ptr, file_name, "r");
 		if (ptr == nullptr) return false;
 		for (int y = 0; y < MAX_MAP_Y; ++y) {
@@ -31,11 +31,11 @@ bool GameMap::loadMap(SDL_Renderer* screen) {
 	}
 }
 void GameMap::DrawMap(SDL_Renderer* des) {
-	maplist[currentMap].background.render(des, NULL);
+	maplist[currentMapIndex].background.render(des, NULL);
 }
-void setCurrentMap(GameMap &gm, int x) {
-	gm.currentMap = x;
+void GameMap::setCurrentMap(int x) {
+	currentMapIndex = x;
 }
 int GameMap::getCurrentMap() {
-	return currentMap;
+	return currentMapIndex;
 }

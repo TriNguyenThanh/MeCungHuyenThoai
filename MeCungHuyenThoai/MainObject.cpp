@@ -108,7 +108,7 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien
 		}
 	}
 }
-void MainObject::movePlayer(MapObject &mapData) {
+void MainObject::movePlayer(GameMap &game_map) {
 	x_val = 0;
 	y_val += GRAVITY; // Nhan vat luon chiu tac dung cua trong luc nen y_val += gravity
 
@@ -116,21 +116,22 @@ void MainObject::movePlayer(MapObject &mapData) {
 		x_val = PLAYER_SPEED; // nhan vat di sang phai thi tang x
 	}
 	else if (input_type.left == 1) {
-		x_val = -PLAYER_SPEED; // nhan vat di sang trai thi giam x
+		x_val = - PLAYER_SPEED; // nhan vat di sang trai thi giam x
 	}
 	if (input_type.jump == 1) {
 		if (on_ground == true) {
-			y_val = -PLAYER_JUMP; // nhan vat nhay thi tang do cao cho nhan vat
+			y_val = - PLAYER_JUMP; // nhan vat nhay thi tang do cao cho nhan vat
 		}
 		on_ground = false;
 		input_type.jump = 0; // nhan vat chi nhay duoc 1 lan nen cho jump = 0
 	}
-	checkHit(mapData); // kiem tra va cham
+	checkHit(game_map); // kiem tra va cham
 	//if (x_pos < 0) {
 	//	setCurrentMap(game_map.getCurrentMap - 1);
 	//}
 }
-void MainObject::checkHit(MapObject &mapData) {
+void MainObject::checkHit(GameMap& game_map) {
+	MapObject mapData = game_map.getMap();
 	int x1 = 0, x2 = 0;
 	int y1 = 0, y2 = 0;
 
@@ -144,15 +145,13 @@ void MainObject::checkHit(MapObject &mapData) {
 	// kiem tra va cham tren duoi
 	if (x1 >= 0 && x2 < MAX_MAP_X && y1 >= 0 && y2 < MAX_MAP_Y) {
 		if (y_val < 0) {
-			if (mapData.tile[y1][x1] != 0 || mapData.tile[y1][x2] != 0) {
-				//y_pos = (y1+1) * TILE_SIZE - 12;
+			if ((mapData.tile[y1][x1] != 0 || mapData.tile[y1][x2] != 0) && (mapData.tile[y1][x1] != 2 && mapData.tile[y1][x2] != 2)) {
 				y_val = 0;
 			}
 		}
 		else if (y_val > 0) {
 			if (mapData.tile[y2][x1] != 0 || mapData.tile[y2][x2] != 0) {
 				y_val = 0;
-				//y_pos = y1 * TILE_SIZE;
 				on_ground = true;
 			}
 		}
@@ -167,26 +166,31 @@ void MainObject::checkHit(MapObject &mapData) {
 		if (x_val > 0) {
 			if ((mapData.tile[y1][x2] != 0 || mapData.tile[y2][x2] != 0) && mapData.tile[y1][x2] != 2) {
 				x_val = 0;
-				x_pos = (x1 * TILE_SIZE - x_val);
-				//x_pos = (x2 * TILE_SIZE) - (frame_width + 1);
-				
+				x_pos = (x1 * TILE_SIZE) - x_val;
 			}
 		}
 		else if (x_val < 0) {
 			if ((mapData.tile[y1][x1] != 0 || mapData.tile[y2][x1] != 0) && mapData.tile[y1][x1] != 2) {
 				x_val = 0;
-				x_pos = (x1+1) * TILE_SIZE + x_val;
-				
+				x_pos = ((x1 + 1) * TILE_SIZE) + x_val;
 			}
 		}
 	}
 
 	x_pos += x_val;
 	y_pos += y_val;
-	if (x_pos < 0 || x_pos + frame_width >= MAX_MAP_X * TILE_SIZE || y_pos + frame_hight > MAX_MAP_Y * TILE_SIZE) {
-		x_val = 0;
-		y_val = 0;
-		x_pos = mapData.spawn_x * TILE_SIZE;
-		y_pos = mapData.spawn_y * TILE_SIZE;
+	//if (x_pos < 0 || x_pos + frame_width >= MAX_MAP_X * TILE_SIZE || y_pos + frame_hight > MAX_MAP_Y * TILE_SIZE) {
+	//	x_val = 0;
+	//	y_val = 0;
+	//	x_pos = mapData.spawn_x * TILE_SIZE;
+	//	y_pos = mapData.spawn_y * TILE_SIZE;
+	//}
+	if (x_pos < 0) {
+		game_map.setCurrentMap(game_map.getCurrentMap() - 1);
+		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+	}
+	else if (x_pos + frame_hight > (MAX_MAP_X + 1) * TILE_SIZE) {
+		game_map.setCurrentMap(game_map.getCurrentMap() + 1);
+		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
 	}
 }
