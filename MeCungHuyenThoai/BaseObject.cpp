@@ -44,7 +44,7 @@ bool BaseObject::loadImg(std::string filepath, SDL_Renderer* screen) {
 
 // Dua texture len screen control
 void BaseObject::render(SDL_Renderer* des, const SDL_Rect* clip) {
-	SDL_Rect renderquad = { rect_.x, rect_.y, rect_.w, rect_.h };
+	SDL_Rect renderquad = { rect_.x, rect_.y, rect_.w, rect_.h};
 	SDL_RenderCopy(des, object_, clip, &renderquad);
 }
 

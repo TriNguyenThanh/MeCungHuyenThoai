@@ -3,6 +3,7 @@
 
 #include "function.h"
 #include "BaseObject.h"
+#include "BulletObject.h"
 #include "Map.h"
 
 class MainObject : public BaseObject {
@@ -20,18 +21,17 @@ private:
 	int y_pos;
 	bool on_ground;
 
+	int countBullet;
+
 	int frame;
 	int frame_width;
 	int frame_hight;
 	SDL_Rect frame_clip[8];
+
+	std::vector<Bullet*> bullet_list;
 public:
 	MainObject();
 	~MainObject();
-
-	enum walk_type {
-		LEFT = -1,
-		RIGHT = 1
-	};
 
 	bool loadImg(std::string filepath, SDL_Renderer* scr);
 	void updateImg();
@@ -40,6 +40,7 @@ public:
 	void setClip();
 	void getInput(SDL_Event evn, SDL_Renderer *scr);
 	void movePlayer(GameMap& game_map);
+	void moveBullet(GameMap& game_map, SDL_Renderer* scr);
 	void checkHit(GameMap& game_map);
 };
 

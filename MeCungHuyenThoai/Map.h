@@ -6,6 +6,8 @@
 
 struct MapObject {
 	BaseObject background;
+	BaseObject descoration;
+	BaseObject ground;
 	int tile[MAX_MAP_Y][MAX_MAP_X];     // Mang luu thong tin phan loai cua cac tile
 	int x, y;							// Vi tri cua tile hien tai
 	int start_x, start_y;				// Vi tri bat dau ve map
@@ -25,7 +27,8 @@ public:
 	void setCurrentMap(int x);
 	int getCurrentMap();
 	bool loadMap(SDL_Renderer* screen);
-	void DrawMap(SDL_Renderer* des);
+	void DrawBackMap(SDL_Renderer* des);
+	void DrawFrontMap(SDL_Renderer* des);
 	MapObject getMap() { return maplist[currentMapIndex]; }
 };
 

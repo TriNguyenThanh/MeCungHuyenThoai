@@ -20,12 +20,13 @@ bool init() {
 		{
 			// khoi tao screen control de ve object
 			screen = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+			SDL_SetRenderDrawBlendMode(screen, SDL_BLENDMODE_BLEND);
 			if (screen == NULL)
 				success = false;
 			else
 			{
 
-				SDL_SetRenderDrawColor(screen, Render_Draw_Color, Render_Draw_Color, Render_Draw_Color, Render_Draw_Color);
+				SDL_SetRenderDrawColor(screen, 180, 180, 180, 180);
 				int imgFlag = IMG_INIT_PNG;
 				if (!(IMG_Init(imgFlag) && imgFlag))
 					success = false;
@@ -62,8 +63,14 @@ void start() {
 
 	Timer fpsControl;
 	bool is_quit = false;
-	int current_map_index = 1;
+	int current_map_index = 0;
 	game_map.setCurrentMap(current_map_index);
+
+	SDL_Rect fog = { 0, 0, SCREEN_WIDTH, SCREEN_HIGHT };
+
+	//BaseObject background, map;
+	//background.loadImg("assets\\map\\map01\\bg01.png", screen);
+	//map.loadImg("assets\\map\\map01\\map01.png", screen);
 
 	while (!is_quit) {
 
@@ -72,12 +79,20 @@ void start() {
 				is_quit = true;
 			player.getInput(event, screen);
 		}
-		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, Render_Draw_Color); // mau nen
+		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, 255); // mau nen
 		SDL_RenderClear(screen); // clear man hinh
 
-		game_map.DrawMap(screen); // ve background len man hinh
+		//SDL_SetTextureAlphaMod(game_map.getMap().background.getObject(), 128);
+		game_map.DrawBackMap(screen); // ve background len man hinh
+		//SDL_SetRenderDrawColor(screen, 255, 255, 255, 20);
+		//SDL_RenderFillRect(screen, &fog);
+		player.moveBullet(game_map, screen);
 		player.movePlayer(game_map);
+		
 		player.show(screen);
+		game_map.DrawFrontMap(screen);
+		//background.render(screen, nullptr);
+		//map.render(screen, nullptr);
 		SDL_RenderPresent(screen); // update lai man hinh
 
 		//gioi han fps
