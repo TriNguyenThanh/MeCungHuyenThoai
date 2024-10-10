@@ -1,36 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsControl.cpp">
+      <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="function.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="BaseObject.cpp">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="MainObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SetUp.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="function.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BaseObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="BulletObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="FpsControl.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="function.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MainObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SetUp.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{2c0a2612-e34c-4bfb-8a61-b1ad92a1fc9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{fb3f8d0f-6efe-4b87-8df6-b15ee04d5dd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

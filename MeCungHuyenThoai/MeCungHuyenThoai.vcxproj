@@ -107,7 +107,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)SDL2_lib\SDL2_image-2.8.2\include;$(SolutionDir)SDL2_lib\SDL2_mixer-2.8.0\include;$(SolutionDir)SDL2_lib\SDL2_ttf-2.22.0\include;$(SolutionDir)\SDL2_lib\SDL2-2.30.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)SDL2_lib\SDL2-2.30.7\lib\x64;$(SolutionDir)SDL2_lib\SDL2_image-2.8.2\lib\x64;$(SolutionDir)SDL2_lib\SDL2_mixer-2.8.0\lib\x64;$(SolutionDir)SDL2_lib\SDL2_ttf-2.22.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -131,12 +131,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseObject.cpp" />
+    <ClCompile Include="BulletObject.cpp" />
+    <ClCompile Include="FpsControl.cpp" />
     <ClCompile Include="function.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainObject.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="SetUp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseObject.h" />
+    <ClInclude Include="BulletObject.h" />
+    <ClInclude Include="FpsControl.h" />
     <ClInclude Include="function.h" />
+    <ClInclude Include="MainObject.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="SetUp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
