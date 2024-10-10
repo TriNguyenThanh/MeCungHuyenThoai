@@ -5,6 +5,7 @@
 #include "BaseObject.h"
 #include "Map.h"
 #include "FpsControl.h"
+#include "MainObject.h"
 
 bool init();
 void close();

@@ -16,7 +16,7 @@ public:
 	void render(SDL_Renderer* des, const SDL_Rect* clip = NULL);
 	void free();
 
-private:
+protected:
 	SDL_Texture* object_;
 	SDL_Rect rect_;
 };

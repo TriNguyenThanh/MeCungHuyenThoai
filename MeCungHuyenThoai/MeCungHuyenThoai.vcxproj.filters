@@ -1,20 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="BaseObject.cpp" />
-    <ClCompile Include="FpsControl.cpp" />
-    <ClCompile Include="function.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Map.cpp" />
-    <ClCompile Include="MainObject.cpp" />
-    <ClCompile Include="SetUp.cpp" />
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsControl.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="function.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="MainObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SetUp.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseObject.h" />
-    <ClInclude Include="FpsControl.h" />
-    <ClInclude Include="function.h" />
-    <ClInclude Include="Map.h" />
-    <ClInclude Include="MainObject.h" />
-    <ClInclude Include="SetUp.h" />
+    <ClInclude Include="BaseObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="FpsControl.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="function.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MainObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SetUp.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{2c0a2612-e34c-4bfb-8a61-b1ad92a1fc9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{fb3f8d0f-6efe-4b87-8df6-b15ee04d5dd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
