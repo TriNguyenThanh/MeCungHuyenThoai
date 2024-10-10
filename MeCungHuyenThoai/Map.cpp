@@ -1,17 +1,17 @@
 #include "Map.h"
 
 GameMap::GameMap() {
-	currentMapIndex = 0;
+	currentMapIndex = 1;
 }
 GameMap::~GameMap() {
 
 }
 bool GameMap::loadMap(SDL_Renderer* screen) {
 	char file_name[40];
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < 6; ++i) {
 
 		// load background layer
-		sprintf_s(file_name, "assets\\map\\map0%d\\bg0%d.png", i, i);
+		sprintf_s(file_name, "assets\\map\\map0%d\\bg%02d.png", i, i);
 		bool ret = maplist[i].background.loadImg(file_name, screen);
 		if (ret == false) return false;
 		maplist[i].start_x = 0;
@@ -19,20 +19,20 @@ bool GameMap::loadMap(SDL_Renderer* screen) {
 		maplist[i].background.setRect(maplist[i].start_x, maplist[i].start_y);
 
 		// load descoration layer
-		sprintf_s(file_name, "assets\\map\\map0%d\\desco0%d.png", i, i);
+		sprintf_s(file_name, "assets\\map\\map0%d\\desco%02d.png", i, i);
 		ret = maplist[i].descoration.loadImg(file_name, screen);
 		if (ret == false) return false;
 		maplist[i].descoration.setRect(maplist[i].start_x, maplist[i].start_y);
 
 		// load ground layer
-		sprintf_s(file_name, "assets\\map\\map0%d\\ground0%d.png", i, i);
+		sprintf_s(file_name, "assets\\map\\map0%d\\ground%02d.png", i, i);
 		ret = maplist[i].ground.loadImg(file_name, screen);
 		if (ret == false) return false;
 		maplist[i].ground.setRect(maplist[i].start_x, maplist[i].start_y);
 
 		// load tile map
 		FILE* ptr = nullptr;
-		sprintf_s(file_name, "assets\\map\\map0%d\\map0%d.dat", i, i);
+		sprintf_s(file_name, "assets\\map\\map0%d\\map%02d.dat", i, i);
 		fopen_s(&ptr, file_name, "r");
 		if (ptr == nullptr) return false;
 		for (int y = 0; y < MAX_MAP_Y; ++y) {
