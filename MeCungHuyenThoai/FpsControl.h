@@ -8,9 +8,15 @@ public:
 	Timer();
 	~Timer();
 	int get_tick();
-	void start();
+	void startGame();
+	void pauseGame();
+	void unpauseGame();
+	void stopGame();
 private:
-	int tick;
+	int start_tick;
+	int pause_tick;
+	bool game_start;
+	bool game_pause;
 };
 
 #endif // !FPS_CONTROL_H_

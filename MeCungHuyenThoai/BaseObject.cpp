@@ -21,19 +21,19 @@ SDL_Rect BaseObject::getRect() {
 SDL_Texture* BaseObject::getObject() {
 	return object_;
 }
-//load file anh len texture
+//load file anh len object
 bool BaseObject::loadImg(std::string filepath, SDL_Renderer* screen) {
 	SDL_Texture* new_texture = NULL;							//tao moi texture
-	SDL_Surface* load_surface = IMG_Load(filepath.c_str());     // load file hinh len texture
+	SDL_Surface* surface = IMG_Load(filepath.c_str());     // load file hinh len texture
 
-	if (load_surface != NULL) {
-		SDL_SetColorKey(load_surface, SDL_TRUE, BACKGROUND_COLOR); // Xoa nen file anh
-		new_texture = SDL_CreateTextureFromSurface(screen, load_surface); // chuyen doi surface sang texture
+	if (surface != NULL) {
+		SDL_SetColorKey(surface, SDL_TRUE, BACKGROUND_COLOR); // Xoa nen file anh
+		new_texture = SDL_CreateTextureFromSurface(screen, surface); // chuyen doi surface sang texture
 		if (new_texture != NULL) { // lay thong so cho khung hinh
-			rect_.w = load_surface->w;
-			rect_.h = load_surface->h;
+			rect_.w = surface->w;
+			rect_.h = surface->h;
 		}
-		SDL_FreeSurface(load_surface); // giai phong vung nho
+		SDL_FreeSurface(surface); // giai phong vung nho
 	}
 
 	SDL_DestroyTexture(object_);
@@ -43,9 +43,9 @@ bool BaseObject::loadImg(std::string filepath, SDL_Renderer* screen) {
 }
 
 // Dua texture len screen control
-void BaseObject::render(SDL_Renderer* des, const SDL_Rect* clip) {
+void BaseObject::render(SDL_Renderer* des, const SDL_Rect* clip, SDL_RendererFlip flip) {
 	SDL_Rect renderquad = { rect_.x, rect_.y, rect_.w, rect_.h};
-	SDL_RenderCopy(des, object_, clip, &renderquad);
+	SDL_RenderCopyEx(des, object_, clip, &renderquad,0, nullptr, flip);
 }
 
 //giai phong doi tuong 

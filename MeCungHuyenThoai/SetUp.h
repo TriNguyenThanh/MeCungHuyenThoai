@@ -8,6 +8,7 @@
 #include "MainObject.h"
 
 bool init();
+bool loadData();
 void close();
 void start();
 

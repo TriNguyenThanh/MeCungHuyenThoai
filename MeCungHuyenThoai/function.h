@@ -10,16 +10,21 @@
 #include "SDL_image.h"
 #include <vector>
 
+#define TILE_SIZE 64
+#define TILE_COUNT 20
+#define MAX_MAP_X 30
+#define MAX_MAP_Y 16
+
 static SDL_Window* window = NULL;   // window control
 static SDL_Renderer* screen = NULL; // screen control
 static SDL_Event event;             // user input control
 
 //screen
-const int SCREEN_WIDTH = 48 * 30;
-const int SCREEN_HIGHT = 48 * 16;
+const int SCREEN_WIDTH = TILE_SIZE * MAX_MAP_X;
+const int SCREEN_HIGHT = TILE_SIZE * MAX_MAP_Y;
 const int SCREEN_BPP = 32;      //bit per pixel
 
-#define BACKGROUND_COLOR SDL_MapRGB(load_surface->format, 180, 180, 180)
+#define BACKGROUND_COLOR SDL_MapRGB(surface->format, 180, 180, 180)
 
 const int CORLOR_KEY_R = 180;	// Red
 const int CORLOR_KEY_G = 180;	// Green
@@ -29,17 +34,16 @@ const int Render_Draw_Color_red = 18; // mau nen
 const int Render_Draw_Color_green = 15;
 const int Render_Draw_Color_blue = 34;
 
-#define TILE_SIZE 48
-#define TILE_COUNT 20
-#define MAX_MAP_X 30
-#define MAX_MAP_Y 16
-
 #define FPS 60
+#define PAUSE_TIME 1500
 
-#define GRAVITY 0.8
-#define PLAYER_SPEED 4
-#define PLAYER_JUMP 13
-#define CHAR_FRAME 8
+#define GRAVITY 0.6
+#define PLAYER_MAX_FALL_SPEED 15
+#define PLAYER_SPEED 3
+#define PLAYER_JUMP 10
+#define PLAYER_CLIMB 2
+#define CHAR_FRAME 20
+#define FRAME_SPACE 86
 
 #define BULLET_SPEED 16
 
@@ -50,6 +54,7 @@ struct InputType
 	int jump;
 	int shoot;
 	int interact;
+	int climb;
 };
 
 enum walk_type {
