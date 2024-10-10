@@ -55,4 +55,9 @@
       <UniqueIdentifier>{fb3f8d0f-6efe-4b87-8df6-b15ee04d5dd2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
