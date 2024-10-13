@@ -1,5 +1,4 @@
-#ifndef FPS_CONTROL_H_
-#define FPS_CONTROL_H_
+#pragma once
 
 #include "function.h"
 
@@ -18,5 +17,3 @@ private:
 	bool game_start;
 	bool game_pause;
 };
-
-#endif // !FPS_CONTROL_H_

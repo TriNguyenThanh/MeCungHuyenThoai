@@ -1,5 +1,4 @@
-#ifndef BULLET_OBJECT_H_
-#define BULLET_OBJECT_H_
+#pragma once
 
 #include "function.h"
 #include "BaseObject.h"
@@ -27,5 +26,3 @@ public:
 	void move(GameMap &game_map);
 	void checkHit(GameMap& game_map);
 };
-
-#endif // !BULLET_OBJECT_H_

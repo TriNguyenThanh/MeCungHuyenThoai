@@ -1,14 +1,19 @@
-#ifndef FUNCTION_H_
-#define FUNCTION_H_
+#pragma once
 
 #include "Windows.h"
+#include "iostream"
 #include "string"
 #include "SDL.h"
 #include "SDL_mixer.h"
 #include "SDL_audio.h"
 #include "SDL_ttf.h"
 #include "SDL_image.h"
+#include "FpsControl.h"
+#include "json.hpp"
 #include <vector>
+#include <fstream>
+
+using JSON = nlohmann::json;
 
 #define TILE_SIZE 64
 #define TILE_COUNT 20
@@ -20,8 +25,8 @@ static SDL_Renderer* screen = NULL; // screen control
 static SDL_Event event;             // user input control
 
 //screen
-const int SCREEN_WIDTH = TILE_SIZE * MAX_MAP_X;
-const int SCREEN_HIGHT = TILE_SIZE * MAX_MAP_Y;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HIGHT = 1080;
 const int SCREEN_BPP = 32;      //bit per pixel
 
 #define BACKGROUND_COLOR SDL_MapRGB(surface->format, 180, 180, 180)
@@ -37,13 +42,17 @@ const int Render_Draw_Color_blue = 34;
 #define FPS 60
 #define PAUSE_TIME 1500
 
-#define GRAVITY 0.6
-#define PLAYER_MAX_FALL_SPEED 15
+
+#define GRAVITY 0.8
+#define PLAYER_MAX_FALL_SPEED 18
+#define PLAYER_JUMP 12
+#define DASH_SPEED 2
 #define PLAYER_SPEED 3
-#define PLAYER_JUMP 10
 #define PLAYER_CLIMB 2
 #define CHAR_FRAME 20
 #define FRAME_SPACE 86
+#define RESPAWN_TIME 60
+
 
 #define BULLET_SPEED 16
 
@@ -59,6 +68,10 @@ struct InputType
 
 enum walk_type {
 	LEFT = -1,
-	RIGHT = 1
+	RIGHT = 1,
+	UP = -2,
+	DOWN = 2,
+	STAND = 0,
+	HIDDEN = 0,
+	SHOW = 255
 };
-#endif // 0

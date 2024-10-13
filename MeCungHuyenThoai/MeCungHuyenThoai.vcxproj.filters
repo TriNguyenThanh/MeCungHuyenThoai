@@ -23,6 +23,9 @@
     <ClCompile Include="SetUp.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="HiddenObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseObject.h">
@@ -44,6 +47,12 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="SetUp.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="HiddenObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>
