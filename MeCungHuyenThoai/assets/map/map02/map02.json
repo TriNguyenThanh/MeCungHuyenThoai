@@ -1,0 +1,89 @@
+{
+    "spawn" :
+    {
+        "x" : 0,
+        "y" : 13
+    },
+    "HiddenBlock" :[
+        {
+            "id" : 1,
+            "name" : "rock",
+            "x" : 19,
+            "y" : 4,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 90,
+            "status" : 0
+        },
+        {
+            "id" : 2,
+            "name" : "rock",
+            "x" : 16,
+            "y" : 6,
+            "harm" : false,
+            "time" : 45,
+            "period_time" : 90,
+            "status" : 255
+        },
+        {
+            "id" : 3,
+            "name" : "rock",
+            "x" : 13,
+            "y" : 8,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 90,
+            "status" : 0
+        },
+        {
+            "id" : 4,
+            "name" : "thorn",
+            "x" : 26,
+            "y" : 9,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 90,
+            "status" : 0
+        },
+        {
+            "id" : 5,
+            "name" : "rock",
+            "x" : 10,
+            "y" : 10,
+            "harm" : false,
+            "time" : 45,
+            "period_time" : 90,
+            "status" : 255
+        },
+        {
+            "id" : 6,
+            "name" : "rock",
+            "x" : 7,
+            "y" : 12,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 90,
+            "status" : 0
+        },
+        {
+            "id" : 7,
+            "name" : "rock",
+            "x" : 13,
+            "y" : 12,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 90,
+            "status" : 0
+        },
+        {
+            "id" : 8,
+            "name" : "rock",
+            "x" : 16,
+            "y" : 12,
+            "harm" : false,
+            "time" : 45,
+            "period_time" : 90,
+            "status" : 255
+        }
+    ]
+}

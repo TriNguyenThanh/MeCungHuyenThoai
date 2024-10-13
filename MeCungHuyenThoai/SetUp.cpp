@@ -11,8 +11,15 @@ bool init() {
 		// khu rang cua
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
+		// Lay do phan giai cua man hinh hien tai
+		SDL_Rect displayBounds;
+		SDL_GetDisplayBounds(0, &displayBounds);
+
+		displayBounds.h = displayBounds.h * 11 / 12;
+		displayBounds.w = displayBounds.h / 9 * 16;
+
 		//tao cua so
-		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HIGHT, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  displayBounds.w, displayBounds.h, SDL_WINDOW_RESIZABLE);
 
 		if (window == nullptr)
 			success = false;
@@ -20,6 +27,10 @@ bool init() {
 		{
 			// khoi tao screen control de ve object
 			screen = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+			// dat ti le man hinh cho cua so game
+			SDL_RenderSetLogicalSize(screen, SCREEN_WIDTH, SCREEN_HIGHT);
+
 			SDL_SetRenderDrawBlendMode(screen, SDL_BLENDMODE_BLEND);
 			if (screen == NULL)
 				success = false;
@@ -41,8 +52,11 @@ MainObject player;
 
 bool loadData() {
 	bool ret = game_map.loadMap(screen);
-	if (ret == false) return false;
-	int current_map_index = 4;
+	if (ret == false)
+	{
+		return false;
+	}
+	int current_map_index = 1;
 	game_map.setCurrentMap(current_map_index);
 
 	player.loadAction(
@@ -82,10 +96,12 @@ void start() {
 				is_quit = true;
 			player.getInput(event, screen);
 		}
-		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, 255); // mau nen
+		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, SHOW); // mau nen
 		SDL_RenderClear(screen); // clear man hinh
 
+		game_map.UpdateHiddenObject();
 		game_map.DrawBackMap(screen); // ve background len man hinh
+		game_map.DrawHiddenObject(screen);
 
 		player.moveBullet(game_map, screen);
 		player.movePlayer(game_map);

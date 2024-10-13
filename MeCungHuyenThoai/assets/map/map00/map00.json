@@ -1,0 +1,99 @@
+{
+    "spawn" :
+    {
+        "x" : 26,
+        "y" : 13
+    },
+    "HiddenBlock" : [
+        {
+            "id" : 1,
+            "name" : "thorn",
+            "x" : 12,
+            "y": 4,
+            "harm": true,
+            "time" : 60,
+            "period_time" : 120,
+            "status" : 255
+        },
+        {
+            "id" : 2,
+            "name" : "thorn",
+            "x" : 14,
+            "y": 4,
+            "harm": false,
+            "time" : 0,
+            "period_time" : 120,
+            "status" : 0
+        },
+        {
+            "id" : 3,
+            "name" : "thorn",
+            "x" : 17,
+            "y": 4,
+            "harm": true,
+            "time" : 60,
+            "period_time" : 120,
+            "status" : 255
+        },
+        {
+            "id" : 4,
+            "name" : "thorn",
+            "x" : 20,
+            "y": 4,
+            "harm": false,
+            "time" : 0,
+            "period_time" : 120,
+            "status" : 0
+        },
+        {
+            "id" : 5,
+            "name" : "thorn",
+            "x" : 9,
+            "y": 6,
+            "harm": false,
+            "time" : 0,
+            "period_time" : 120,
+            "status" : 0
+        },        
+        {
+            "id" : 6,
+            "name" : "thorn",
+            "x" : 12,
+            "y": 8,
+            "harm": true,
+            "time" : 60,
+            "period_time" : 120,
+            "status" : 255
+        },
+        {
+            "id" : 7,
+            "name" : "thorn",
+            "x" : 20,
+            "y": 8,
+            "harm": false,
+            "time" : 0,
+            "period_time" : 120,
+            "status" : 0
+        },
+        {
+            "id" : 8,
+            "name" : "thorn",
+            "x" : 15,
+            "y": 10,
+            "harm": false,
+            "time" : 0,
+            "period_time" : 120,
+            "status" : 0
+        },
+        {
+            "id" : 9,
+            "name" : "thorn",
+            "x" : 17,
+            "y": 10,
+            "harm": true,
+            "time" : 60,
+            "period_time" : 120,
+            "status" : 255
+        }
+    ]
+}

@@ -36,7 +36,7 @@ void Bullet::checkHit(GameMap& game_map)
 	int x = (rect_.x + 20) / TILE_SIZE;
 	int y = (rect_.y + 10) / TILE_SIZE;
 
-	if (mapData.tile[y][x] != 0) {
+	if (mapData.tile[y][x] != 0 && mapData.tile[y][x] != 2 && mapData.tile[y][x] != 5) {
 		is_move = 0;
 	}
 }

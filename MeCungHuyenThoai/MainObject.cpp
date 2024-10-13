@@ -16,12 +16,18 @@ MainObject::MainObject() {
 	dash = 0;
 
 	died = false;
+	respawn = RESPAWN_TIME;
 
 	countBullet = 5;
 
-	int frame = CHAR_FRAME;
-	int frame_width = 0;
-	int frame_hight = 0;
+	frame = CHAR_FRAME;
+	frame_width = 0;
+	frame_hight = 0;
+	for (int i = 0; i < frame; ++i)	{
+
+		frame_clip[i].x = frame_clip[i].y = frame_clip[i].w = frame_clip[i].h = 0;
+	}
+
 
 	input_type.right = input_type.left = input_type.jump = input_type.shoot = input_type.interact = 0;
 	on_ground = false;
@@ -87,7 +93,7 @@ void MainObject::show(SDL_Renderer* scr) { // Hien thi nhan vat
 
 	if (!on_ground)
 	{
-		if (frame > 13)
+		if (frame > 31)
 		{
 			frame = 14;
 		}
@@ -96,7 +102,7 @@ void MainObject::show(SDL_Renderer* scr) { // Hien thi nhan vat
 	else if (frame > 39)
 	{
 		frame = 0;
-		input_type.shoot = 0;
+		//input_type.shoot = 0;
 		tmp = 0;
 	}
 	else
@@ -107,23 +113,41 @@ void MainObject::show(SDL_Renderer* scr) { // Hien thi nhan vat
 	double angle = 0;
 	if (died == true)
 	{
-		angle = 90;
-		died = false;
-		frame = 0;
-		x_pos = x_spawn;
-		y_pos = y_spawn;
+		if (respawn > (RESPAWN_TIME - 7))
+		{
+			angle = (3 + (RESPAWN_TIME - respawn) * 2.5);
+		}
+		else
+		{
+			angle = 90;
+		}
+		if (respawn >= 0) 
+		{
+			respawn--;
+		}
+		else
+		{
+			died = false;
+			frame = 0;
+			x_pos = x_spawn;
+			y_pos = y_spawn;
+			respawn = RESPAWN_TIME;
+		}
+
 	}
 	else if (input_type.left == 1 || input_type.right == 1)
 	{
-		if (tmp >= 12)
-			angle = 10;
+		if (tmp % 10 >= 6)
+			angle = 3;
 	}
-	if (input_type.left == 1)
+	if (status == LEFT)
 		angle = -angle;
-
+	SDL_Point point;
+	point.x = frame_width / 2;
+	point.y = frame_hight;
 	SDL_Rect* current_frame = &frame_clip[tmp];	
 	SDL_Rect renderQuad = { rect_.x, rect_.y, frame_width, frame_hight};
-	SDL_RenderCopyEx(scr, object_, current_frame, &renderQuad, angle, nullptr, flip);
+	SDL_RenderCopyEx(scr, object_, current_frame, &renderQuad, angle, &point, flip);
 	rect_.x = x_pos;
 	rect_.y = y_pos;
 }
@@ -138,12 +162,12 @@ void MainObject::setSpawn(int x, int y) { // dat vi tri hoi sinh cho nhan vat
 }
 
 void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien nguoi dung
-	if (evn.type == SDL_KEYDOWN) {
+	if (evn.type == SDL_KEYDOWN && died == false) {
 		switch (evn.key.keysym.sym) {
 		case SDLK_j:
 			if (countBullet > 0 && input_type.shoot == 0)
 			{
-				input_type.shoot == 1;
+				input_type.shoot = 1;
 				// vien dan
 				Bullet* playerBullet = new Bullet;
 				playerBullet->loadImg("assets\\player\\bullet\\blue.png", scr);
@@ -171,7 +195,7 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien
 			}
 			break;
 		case SDLK_LSHIFT:
-			dash = 2;
+			dash = DASH_SPEED;
 			break;
 		case SDLK_w:
 			input_type.climb = 1;
@@ -211,6 +235,9 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien
 		{
 		case SDLK_LSHIFT:
 			dash = 0;
+			break;
+		case SDLK_j:
+			input_type.shoot = 0;
 			break;
 		case SDLK_w:
 			input_type.climb = 0;
@@ -257,8 +284,6 @@ void MainObject::moveBullet(GameMap& game_map, SDL_Renderer* scr)
 	}
 }
 void MainObject::movePlayer(GameMap &game_map) {
-	if (died == true) return;
-
 	x_val = 0;
 	y_val += GRAVITY; // Nhan vat luon chiu tac dung cua trong luc nen y_val += gravity
 	if (y_val > PLAYER_MAX_FALL_SPEED) y_val = PLAYER_MAX_FALL_SPEED;
@@ -276,7 +301,41 @@ void MainObject::movePlayer(GameMap &game_map) {
 		on_ground = false;
 		input_type.jump = 0; // nhan vat chi nhay duoc 1 lan nen cho jump = 0
 	}
+	if (died == true)
+	{
+		x_val = 0;
+		y_val += GRAVITY;
+		if (y_val > PLAYER_MAX_FALL_SPEED) y_val = PLAYER_MAX_FALL_SPEED;
+	}
 	checkHit(game_map); // kiem tra va cham
+
+	// Cap nhat lai vi tri
+	x_pos += x_val;
+	y_pos += y_val;
+
+	// dich chuyen sang map khac
+	if ((x_pos + (FRAME_SPACE / 4 * 3)) < 0) {
+		game_map.setCurrentMap(game_map.getCurrentMap() - 1);
+		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		x_pos = MAX_MAP_X * TILE_SIZE - frame_width;
+	}
+	else if ((x_pos + frame_width - (FRAME_SPACE / 4 * 3)) > MAX_MAP_X * TILE_SIZE) {
+		game_map.setCurrentMap(game_map.getCurrentMap() + 1);
+		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		x_pos = 10;
+	}
+	else if (y_pos + frame_hight > SCREEN_HIGHT)
+	{
+		game_map.setCurrentMap(game_map.getCurrentMap() + 3);
+		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		y_pos = 10;
+	}
+	else if (y_pos + 25 < 0)
+	{
+		game_map.setCurrentMap(game_map.getCurrentMap() - 3);
+		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		y_pos = MAX_MAP_Y * TILE_SIZE - frame_hight;
+	}
 }
 void MainObject::checkHit(GameMap& game_map) {
 	MapObject mapData = game_map.getMap();
@@ -293,85 +352,215 @@ void MainObject::checkHit(GameMap& game_map) {
 	// kiem tra va cham tren duoi
 	if (x1 >= 0 && x2 < MAX_MAP_X && y1 >= 0 && y2 < MAX_MAP_Y)
 	{
+		// nhan vat leo day di len
 		if ((mapData.tile[y1][x1] == 2 || mapData.tile[y1][x2] == 2) && input_type.climb == 1)
 			y_val = -PLAYER_CLIMB;
 
+		// nhan vat huong len tren
 		if (y_val < 0) {
-			if (mapData.tile[y1][x1] == 3 || mapData.tile[y1][x2] == 3)
-			{
-				died = true;
-				on_ground = false;
-				return;
-			}
-
+			// va cham voi block
 			if ((mapData.tile[y1][x1] != 0 || mapData.tile[y1][x2] != 0) && (mapData.tile[y1][x1] != 2 && mapData.tile[y1][x2] != 2)) {
-				y_val = 0;
+				
+				// va cham voi block an
+				if (mapData.tile[y1][x1] == 4 || mapData.tile[y1][x2] == 4 || mapData.tile[y1][x1] == 5 || mapData.tile[y1][x2] == 5)
+				{
+					for (const auto& block : game_map.getMap().hidden_block_list)
+					{
+						if (block->is_at(x1, y1) || block->is_at(x2, y1))
+						{
+							if (block->isHarm())
+							{
+								y_val = 0;
+								died = true;
+								on_ground = false;
+								return;
+							}
+							if (block->is_show())
+							{
+								y_val = 0;
+							}
+							break;
+						}
+					}
+				}
+				else y_val = 0;
+				// va cham voi gai tinh
+				if (mapData.tile[y1][x1] == 3 || mapData.tile[y1][x2] == 3)
+				{
+					died = true;
+					on_ground = false;
+					return;
+				}
 			}
 		}
+		// nhan vat huong xuong
 		else if (y_val > 0) {
-			if (mapData.tile[y2][x1] == 3 && mapData.tile[y2][x2] == 3)
-			{
-				died = true;
-				on_ground = false;
-				return;
-			}
+			// va cham voi block
 			if ((mapData.tile[y2][x1] != 0 || mapData.tile[y2][x2] != 0) && (mapData.tile[y2][x1] != 2 && mapData.tile[y2][x2] != 2)) {
-				y_val = 0;
-				on_ground = true;
-				if (object_ == jump)
+				if (mapData.tile[y2][x1] == 4 || mapData.tile[y2][x2] == 4 || mapData.tile[y2][x1] == 5 || mapData.tile[y2][x2] == 5)
 				{
-					if (input_type.left == 1 || input_type.right == 1)
-						updateImg(run);
-					else
-						updateImg(idle);
+ 					for (const auto& block : game_map.getMap().hidden_block_list)
+					{
+						if (block->is_at(x1, y2) || block->is_at(x2, y2))
+						{
+							if (block->isHarm())
+							{
+								y_val = 0;
+								died = true;
+								on_ground = false;
+								return;
+							}
+							if (block->is_show())
+							{
+								y_pos = y2 * TILE_SIZE - frame_hight;
+								y_val = 0;
+								on_ground = true;
+								if (object_ == jump)
+								{
+									if (input_type.left == 1 || input_type.right == 1)
+										updateImg(run);
+									else
+										updateImg(idle);
+								}
+							}
+							break;
+						}
+					}
+				}
+				else
+				{
+					y_val = 0;
+					on_ground = true;
+					if (object_ == jump)
+					{
+						if (input_type.left == 1 || input_type.right == 1)
+							updateImg(run);
+						else
+							updateImg(idle);
+					}
+				}
+				if (mapData.tile[y2][x1] == 3 && mapData.tile[y2][x2] == 3)
+				{
+					died = true;
+					on_ground = false;
+					return;
 				}
 			}
 		}
 	}
 	// kiem tra va cham hai ben
-	x1 = (x_pos + x_val +  FRAME_SPACE)/TILE_SIZE;
-	x2 = (x_pos + x_val +  frame_width - FRAME_SPACE) / TILE_SIZE;
+	x1 = (x_pos +  FRAME_SPACE + x_val)/TILE_SIZE;
+	x2 = (x_pos +  frame_width - FRAME_SPACE + x_val) / TILE_SIZE;
 
 	y1 = (y_pos + 25) / TILE_SIZE;
 	y2 = (y_pos + frame_hight - 1) / TILE_SIZE;
+	if (input_type.interact == 1) {
+		x1 = (x_pos + FRAME_SPACE + x_val) / TILE_SIZE;
+	}
 	if (x1 >= 0 && x2 < MAX_MAP_X && y1 >= 0 && y2 < MAX_MAP_Y) {
+		// Nhan vat di qua phai
 		if (x_val > 0) {
-			if ((mapData.tile[y1][x2] != 0 || mapData.tile[y2][x2] != 0) && (mapData.tile[y1][x2] != 2 && mapData.tile[y2][x2] != 2)) {
-				x_val = 0;
-				x_pos = (x1 * TILE_SIZE) - x_val - FRAME_SPACE;
+			bool up = false, down = false;
+			if (mapData.tile[y1][x2] == 0 || mapData.tile[y1][x2] == 2 || mapData.tile[y1][x2] == 5) up = true;
+			if (mapData.tile[y2][x2] == 0 || mapData.tile[y2][x2] == 2 || mapData.tile[y2][x2] == 5) down = true;
+
+			if (!up || !down)
+			{
+				if (mapData.tile[y1][x2] == 4 || mapData.tile[y2][x2] == 4)
+				{
+					for (const auto& block : game_map.getMap().hidden_block_list)
+					{
+						if (block->is_at(x2, y1) && block->is_show() || (block->is_at(x2, y2) && block->is_show()))
+						{
+							x_val = 0;
+							x_pos = (x1 * TILE_SIZE) - x_val - FRAME_SPACE;
+							break;
+						}
+					}
+				}
+				else
+				{
+					x_val = 0;
+					x_pos = (x1 * TILE_SIZE) - x_val - FRAME_SPACE;
+				}
 			}
 		}
+		// Nhan vat di qua trai
 		else if (x_val < 0) {
-			if ((mapData.tile[y1][x1] != 0 || mapData.tile[y2][x1] != 0) && (mapData.tile[y1][x1] != 2 && mapData.tile[y2][x1] != 2)) {
-				x_val = 0;
-				x_pos = ((x1 + 1) * TILE_SIZE) + x_val - FRAME_SPACE;
+			bool up = false, down = false;
+			if (mapData.tile[y1][x1] == 0 || mapData.tile[y1][x1] == 2 || mapData.tile[y1][x1] == 5) up = true;
+			if (mapData.tile[y2][x1] == 0 || mapData.tile[y2][x1] == 2 || mapData.tile[y2][x1] == 5) down = true;
+
+
+			if (!up || !down)
+			{
+				if (mapData.tile[y1][x1] == 4 || mapData.tile[y2][x1] == 4)
+				{
+					for (const auto& block : game_map.getMap().hidden_block_list)
+					{
+						if ((block->is_at(x1, y1) && block->is_show()) || (block->is_at(x1, y2) && block->is_show()))
+						{
+							x_val = 0;
+							x_pos = ((x1 + 1) * TILE_SIZE) + x_val - FRAME_SPACE;
+							break;
+						}
+					}
+				}
+				else
+				{
+					x_val = 0;
+					x_pos = ((x1 + 1) * TILE_SIZE) + x_val - FRAME_SPACE;
+				}
 			}
 		}
-	}
+		// nhan vat dung yen
+		else
+		{
+			if (status == LEFT)
+				x_val = -(PLAYER_SPEED + dash);
+			else x_val = (PLAYER_SPEED + dash);
 
-	x_pos += x_val;
-	y_pos += y_val;
+			x1 = (x_pos + x_val + FRAME_SPACE) / TILE_SIZE;
+			x2 = (x_pos + x_val + frame_width - FRAME_SPACE) / TILE_SIZE;
 
-	if ((x_pos + (FRAME_SPACE / 4 * 3)) < 0) {
-		game_map.setCurrentMap(game_map.getCurrentMap() - 1);
-		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
-		x_pos = MAX_MAP_X * TILE_SIZE - frame_width;
-	}
-	else if ((x_pos + frame_width - (FRAME_SPACE / 4 * 3)) > MAX_MAP_X * TILE_SIZE) {
-		game_map.setCurrentMap(game_map.getCurrentMap() + 1);
-		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
-		x_pos = 10;
-	}
-	else if (y_pos + 25 > SCREEN_HIGHT)
-	{
-		game_map.setCurrentMap(game_map.getCurrentMap() + 3);
-		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
-		y_pos = 10;
-	}
-	else if (y_pos + 25 < 0)
-	{
-		game_map.setCurrentMap(game_map.getCurrentMap() - 3);
-		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
-		y_pos = MAX_MAP_Y * TILE_SIZE - frame_hight;
+			y1 = (y_pos + 25) / TILE_SIZE;
+			y2 = (y_pos + frame_hight - 1) / TILE_SIZE;
+			for (const auto& block : game_map.getMap().hidden_block_list)
+			{
+				if (block->is_at(x2, y1) && block->is_show())
+				{
+					if (block->is_static() && input_type.interact == 1)
+					{
+						block->chanceStatus();
+					}
+				}
+				if (block->is_at(x2, y2) && block->is_show())
+				{
+					
+					if (block->is_static() && input_type.interact == 1)
+					{
+						block->chanceStatus();
+					}
+				}
+				if (block->is_at(x1, y1) && block->is_show())
+				{
+
+					if (block->is_static() && input_type.interact == 1)
+					{
+						block->chanceStatus();
+					}
+				}
+				if (block->is_at(x1, y2) && block->is_show())
+				{
+
+					if (block->is_static() && input_type.interact == 1)
+					{
+						block->chanceStatus();
+					}
+				}
+			}
+			x_val = 0;
+		}
+
 	}
 }

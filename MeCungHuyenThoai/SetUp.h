@@ -1,5 +1,4 @@
-#ifndef SET_UP_H_
-#define SET_UP_H_
+#pragma once
 
 #include "function.h"
 #include "BaseObject.h"
@@ -11,5 +10,3 @@ bool init();
 bool loadData();
 void close();
 void start();
-
-#endif

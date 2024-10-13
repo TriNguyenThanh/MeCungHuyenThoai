@@ -1,5 +1,4 @@
-#ifndef MAIN_ONJECT_H_
-#define MINA_OBJECT_H_
+#pragma once
 
 #include "function.h"
 #include "BaseObject.h"
@@ -24,6 +23,7 @@ private:
 	int dash;
 
 	bool died;
+	int respawn;
 
 	int countBullet;
 
@@ -54,5 +54,3 @@ public:
 	void moveBullet(GameMap& game_map, SDL_Renderer* scr);
 	void checkHit(GameMap& game_map);
 };
-
-#endif 
