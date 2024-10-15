@@ -24,7 +24,7 @@ bool init() {
 		}
 
 		//tao cua so
-		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  display.w, display.h, SDL_WINDOW_RESIZABLE);
+		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  display.w, display.h, SDL_WINDOW_SHOWN);
 
 		if (window == nullptr)
 			success = false;
