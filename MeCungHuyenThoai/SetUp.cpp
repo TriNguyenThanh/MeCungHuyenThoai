@@ -1,6 +1,7 @@
 #include "SetUp.h"
 
 bool init() {
+	SetProcessDPIAware(); // nhan biet DPI cua man hinh
 	bool success = true;
 	// chuan bi moi truong tao cua so, render, am thanh
 	bool ret = (SDL_Init(SDL_INIT_VIDEO) >= 0);
@@ -13,14 +14,17 @@ bool init() {
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
 		// Lay do phan giai cua man hinh hien tai
-		SDL_Rect displayBounds;
-		SDL_GetDisplayBounds(0, &displayBounds);
+		SDL_Rect display;
+		SDL_GetDisplayBounds(0, &display);
 
-		displayBounds.w = displayBounds.w / 12 * 11;
-		displayBounds.h = displayBounds.h / 12 * 11;
+		if (display.w > SCREEN_WIDTH)
+		{
+			display.w = SCREEN_WIDTH;
+			display.h = SCREEN_HIGHT;
+		}
 
 		//tao cua so
-		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  displayBounds.w, displayBounds.h, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  display.w, display.h, SDL_WINDOW_RESIZABLE);
 
 		if (window == nullptr)
 			success = false;
@@ -30,7 +34,7 @@ bool init() {
 			screen = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 			// dat ti le man hinh cho cua so game
-			SDL_RenderSetLogicalSize(screen, 1920, 1080);
+			SDL_RenderSetLogicalSize(screen, SCREEN_WIDTH, SCREEN_HIGHT);
 
 			SDL_SetRenderDrawBlendMode(screen, SDL_BLENDMODE_BLEND);
 			if (screen == NULL)
@@ -105,7 +109,7 @@ void start() {
 			if (event.type == SDL_QUIT)
 				is_quit = true;
 			player.getInput(event, screen);
-			status_bar.getInput(event, is_quit);
+			status_bar.getInput(screen, event, is_quit);
 		}
 		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, SHOW); // mau nen
 		SDL_RenderClear(screen); // clear man hinh

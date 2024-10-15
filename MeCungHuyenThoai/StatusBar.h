@@ -69,7 +69,7 @@ public:
 	QuitButton() { ; }
 	~QuitButton() { ; }
 
-	void getInput(SDL_Event evn, bool &quit);
+	void getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit);
 	void render(SDL_Renderer* scr);
 };
 
@@ -111,6 +111,6 @@ public:
 
 	int getLife() { return life; }
 	int getMana() { return mana; }
-	void getInput(SDL_Event evn, bool &quit);
+	void getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit);
 	//
 };

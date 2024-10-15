@@ -236,12 +236,19 @@ void MiniMap::render(SDL_Renderer* scr)
 }
 
 // dinh nghia quit button
-void QuitButton::getInput(SDL_Event evn, bool &quit)
+void QuitButton::getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit)
 {
 	if (evn.type == SDL_MOUSEBUTTONDOWN && evn.button.button == SDL_BUTTON_LEFT)
 	{
 		SDL_Point mouse;
 		SDL_GetMouseState(&mouse.x, &mouse.y);
+		float x, y;
+		SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+		mouse.x = x;
+		mouse.y = y;
+
+		std::cout << mouse.x << ' ' << mouse.y << '\n';
+		std::cout << rect_.x << ' ' << rect_.y << '\n';
 		if (rect_.x <= mouse.x && mouse.x <= rect_.x + TILE_SIZE && rect_.y <= mouse.y && mouse.y <= rect_.y + TILE_SIZE)
 		{
 			quit = true;
@@ -252,6 +259,10 @@ void QuitButton::render(SDL_Renderer* scr)
 {
 	SDL_Point mouse;
 	SDL_GetMouseState(&mouse.x, &mouse.y);
+	float x, y;
+	SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+	mouse.x = x;
+	mouse.y = y;
 	SDL_Rect renderquad = { rect_.x, rect_.y, TILE_SIZE, TILE_SIZE };
 
 	if (rect_.x <= mouse.x && mouse.x <= rect_.x + TILE_SIZE && rect_.y <= mouse.y && mouse.y <= rect_.y + TILE_SIZE)
@@ -396,7 +407,7 @@ void StatusBar::setCrystal(std::vector<int> crystal_)
 		crystal[i] = crystal_[i];
 	}
 }
-void StatusBar::getInput(SDL_Event evn, bool &quit)
+void StatusBar::getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit)
 {
-	QuitStatus->getInput(evn, quit);
+	QuitStatus->getInput(scr, evn, quit);
 }
