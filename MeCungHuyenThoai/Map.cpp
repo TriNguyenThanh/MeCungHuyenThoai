@@ -97,9 +97,6 @@ void GameMap::DrawFrontMap(SDL_Renderer* des)
 void GameMap::setCurrentMap(int x) {
 	currentMapIndex = x;
 }
-int GameMap::getCurrentMap() {
-	return currentMapIndex;
-}
 void GameMap::DrawHiddenObject(SDL_Renderer* des)
 {
 	for (const auto& i : maplist[currentMapIndex].hidden_block_list)

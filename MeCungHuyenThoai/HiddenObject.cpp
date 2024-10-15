@@ -23,7 +23,11 @@ void HiddenObject::set(bool harm_, int status_, int time_, int period_time_)
 		status = HIDDEN;
 	else status = SHOW;
 	period_time = period_time_;
-	if (status == SHOW)
+	if (time_ != 0 && time_ != period_time / 2)
+	{
+		time = time_;
+	}
+	else if (status == SHOW)
 		time = period_time / 2;
 	else
 		time = 0;
@@ -91,19 +95,3 @@ void ThornBlock::update() {
 		harm = true;
 	else harm = false;
 }
-//bool HiddenObject::checkHit(const SDL_Rect& targetRect)
-//{	
-//	int x1 = targetRect.x;
-//	int x2 = targetRect.x + targetRect.w;
-//	int y1 = targetRect.y;
-//	int y2 = targetRect.y + targetRect.h;
-//
-//	if (
-//		is_in(x1, y1, rect_) ||
-//		is_in(x1, y2, rect_) ||
-//		is_in(x2, y1, rect_) ||
-//		is_in(x2, y2, rect_)
-//		)
-//		return true;
-//	return false;
-//}

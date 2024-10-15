@@ -15,11 +15,13 @@
 
 using JSON = nlohmann::json;
 
+// thong so tile map
 #define TILE_SIZE 64
 #define TILE_COUNT 20
 #define MAX_MAP_X 30
 #define MAX_MAP_Y 16
 
+// cong cu quan ly cua so game va quan ly game
 static SDL_Window* window = NULL;   // window control
 static SDL_Renderer* screen = NULL; // screen control
 static SDL_Event event;             // user input control
@@ -39,11 +41,23 @@ const int Render_Draw_Color_red = 18; // mau nen
 const int Render_Draw_Color_green = 15;
 const int Render_Draw_Color_blue = 34;
 
+// text color
+const std::string UTM_Khuccamta = "assets\\screen\\font\\UTM_Khuccamta.ttf";
+const SDL_Color RED = { 255, 0, 0 };
+const SDL_Color GREEN = { 0, 255, 0 };
+const SDL_Color BLUE = { 0, 0, 255 };
+const SDL_Color BLACK = { 0, 0, 0 };
+const SDL_Color WHITE = { 255, 255, 255 };
+const SDL_Color YELLOW = { 246, 255, 0 };
+
+// FPS control
 #define FPS 60
 #define PAUSE_TIME 1500
 
-
+// thong so cua moi truong
 #define GRAVITY 0.8
+
+// thong so cua nguoi choi
 #define PLAYER_MAX_FALL_SPEED 18
 #define PLAYER_JUMP 12
 #define DASH_SPEED 2
@@ -52,8 +66,6 @@ const int Render_Draw_Color_blue = 34;
 #define CHAR_FRAME 20
 #define FRAME_SPACE 86
 #define RESPAWN_TIME 60
-
-
 #define BULLET_SPEED 16
 
 struct InputType

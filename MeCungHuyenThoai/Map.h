@@ -24,7 +24,7 @@ public:
 	GameMap();
 	~GameMap();
 	void setCurrentMap(int x);
-	int getCurrentMap();
+	int getCurrentMap() const { return currentMapIndex; }
 	bool loadMap(SDL_Renderer* screen);
 	void DrawBackMap(SDL_Renderer* des);
 	void DrawFrontMap(SDL_Renderer* des);
