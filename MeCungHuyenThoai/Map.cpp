@@ -6,18 +6,14 @@ GameMap::GameMap() {
 GameMap::~GameMap() {
 
 }
-bool GameMap::loadMap(SDL_Renderer* screen) {
-	std::string hidden_rock = "assets\\envairoment\\hidden_rock.png";
-	std::string show_rock = "assets\\envairoment\\show_rock.png";
-	std::string hidden_thorn = "assets\\envairoment\\hidden_thorn.png";
-	std::string show_thorn = "assets\\envairoment\\show_thorn.png";
+bool GameMap::loadMap(SDL_Renderer* scr) {
 
 	char file_name[40];
 	for (int i = 0; i < 6; ++i) {
 
 		// load background layer
 		sprintf_s(file_name, "assets\\map\\map0%d\\bg%02d.png", i, i);
-		bool ret = maplist[i].background.loadImg(file_name, screen);
+		bool ret = maplist[i].background.loadImg(file_name, scr);
 		if (ret == false) return false;
 		maplist[i].start_x = 0;
 		maplist[i].start_y = 0;
@@ -25,13 +21,13 @@ bool GameMap::loadMap(SDL_Renderer* screen) {
 
 		// load descoration layer
 		sprintf_s(file_name, "assets\\map\\map0%d\\desco%02d.png", i, i);
-		ret = maplist[i].descoration.loadImg(file_name, screen);
+		ret = maplist[i].descoration.loadImg(file_name, scr);
 		if (ret == false) return false;
 		maplist[i].descoration.setRect(maplist[i].start_x, maplist[i].start_y);
 
 		// load ground layer
 		sprintf_s(file_name, "assets\\map\\map0%d\\ground%02d.png", i, i);
-		ret = maplist[i].ground.loadImg(file_name, screen);
+		ret = maplist[i].ground.loadImg(file_name, scr);
 		if (ret == false) return false;
 		maplist[i].ground.setRect(maplist[i].start_x, maplist[i].start_y);
 
@@ -57,18 +53,23 @@ bool GameMap::loadMap(SDL_Renderer* screen) {
 		maplist[i].spawn_x = jsonData["spawn"]["x"];
 		maplist[i].spawn_y = jsonData["spawn"]["y"];
 
+		std::string hidden_rock = "assets\\envairoment\\hidden_rock.png";
+		std::string show_rock = "assets\\envairoment\\show_rock.png";
+		std::string hidden_thorn = "assets\\envairoment\\hidden_thorn.png";
+		std::string show_thorn = "assets\\envairoment\\show_thorn.png";
+
 		for (const auto& block : jsonData["HiddenBlock"])
 		{
 			HiddenObject* tmp = nullptr;
 			if (block["name"] == "thorn")
 			{
 				tmp = new ThornBlock;
-				tmp->loadImg(hidden_thorn, show_thorn, screen);
+				tmp->loadImg(hidden_thorn, show_thorn, scr);
 			}
 			else
 			{
 				tmp = new RockBlock;
-				tmp->loadImg(hidden_rock, show_rock, screen);
+				tmp->loadImg(hidden_rock, show_rock, scr);
 			}
 			tmp->setRect(block["x"] * TILE_SIZE, block["y"] * TILE_SIZE);
 			tmp->set(block["harm"], block["status"], block["time"], block["period_time"]);
@@ -81,6 +82,26 @@ bool GameMap::loadMap(SDL_Renderer* screen) {
 			}
 			maplist[i].hidden_block_list.push_back(tmp);
 		}
+
+		for (const auto& block : jsonData["items"])
+		{
+			Item* tmp = new Item;
+			std::string name = block["name"];
+			if (name == "mana_bottle")
+			{
+				tmp->loadImg("assets\\item\\mana.png", scr);
+			}
+			else
+			{
+				sprintf_s(file_name, "assets\\item\\%s.png", name.c_str());
+				bool ret = tmp->loadImg(file_name, scr);
+				if (!ret) return false;
+			}
+			tmp->setRect(block["x"] * TILE_SIZE, block["y"] * TILE_SIZE);
+			tmp->setName(name);
+
+			maplist[i].items_list.push_back(tmp);
+		}
 	}
 	return true;
 }
@@ -92,7 +113,12 @@ void GameMap::DrawBackMap(SDL_Renderer* des) {
 // ve ground
 void GameMap::DrawFrontMap(SDL_Renderer* des)
 {
+	for (const auto& item_ : maplist[currentMapIndex].items_list)
+	{
+		item_->render(des);
+	}
 	maplist[currentMapIndex].ground.render(des, NULL);
+	
 }
 void GameMap::setCurrentMap(int x) {
 	currentMapIndex = x;
