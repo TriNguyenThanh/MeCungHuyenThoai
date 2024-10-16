@@ -20,6 +20,7 @@ public:
 	int getY_val() { return y_val; }
 
 	void setDir(int dir) { this->dir = dir; }
+	int getDir() const { return dir; }
 	void setMove(const int& x) { is_move = x; }
 	int getMove() { return is_move; }
 
