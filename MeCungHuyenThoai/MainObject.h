@@ -22,6 +22,7 @@ private:
 	bool on_ground;
 	int dash;
 
+	int life;
 	bool died;
 	int respawn;
 
@@ -53,4 +54,7 @@ public:
 	void movePlayer(GameMap& game_map);
 	void moveBullet(GameMap& game_map, SDL_Renderer* scr);
 	void checkHit(GameMap& game_map);
+
+	int getLife() const { return life; }
+	int getMana() const { return countBullet; }
 };

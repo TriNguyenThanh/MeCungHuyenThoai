@@ -1,9 +1,9 @@
-#include "SetUp.h"
+﻿ #include "SetUp.h"
 
-int main(int argc, char* argv[]) {
+ int main(int argc, char* argv[]) {
 
-	start();
-	close();
+ 	start();
+ 	close();
 
-	return 0;
-}
+ 	return 0;
+ }

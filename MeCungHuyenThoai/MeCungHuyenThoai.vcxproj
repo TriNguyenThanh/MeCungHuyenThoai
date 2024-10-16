@@ -108,7 +108,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)SDL2_lib\SDL2-2.30.7\lib\x64;$(SolutionDir)SDL2_lib\SDL2_image-2.8.2\lib\x64;$(SolutionDir)SDL2_lib\SDL2_mixer-2.8.0\lib\x64;$(SolutionDir)SDL2_lib\SDL2_ttf-2.22.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -144,6 +144,7 @@
     <ClCompile Include="MainObject.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="SetUp.cpp" />
+    <ClCompile Include="StatusBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseObject.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="MainObject.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="SetUp.h" />
+    <ClInclude Include="StatusBar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

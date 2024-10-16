@@ -1,10 +1,12 @@
 #include "SetUp.h"
 
 bool init() {
+	SetProcessDPIAware(); // nhan biet DPI cua man hinh
 	bool success = true;
 	// chuan bi moi truong tao cua so, render, am thanh
-	int ret = SDL_Init(SDL_INIT_VIDEO);
-	if (ret < 0)
+	bool ret = (SDL_Init(SDL_INIT_VIDEO) >= 0);
+	ret = (TTF_Init() != -1);
+	if (!ret)
 		success = false;
 	else
 	{
@@ -12,14 +14,17 @@ bool init() {
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
 		// Lay do phan giai cua man hinh hien tai
-		SDL_Rect displayBounds;
-		SDL_GetDisplayBounds(0, &displayBounds);
+		SDL_Rect display;
+		SDL_GetDisplayBounds(0, &display);
 
-		displayBounds.h = displayBounds.h * 11 / 12;
-		displayBounds.w = displayBounds.h / 9 * 16;
+		if (display.w > SCREEN_WIDTH)
+		{
+			display.w = SCREEN_WIDTH;
+			display.h = SCREEN_HIGHT;
+		}
 
 		//tao cua so
-		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  displayBounds.w, displayBounds.h, SDL_WINDOW_RESIZABLE);
+		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  display.w, display.h, SDL_WINDOW_SHOWN);
 
 		if (window == nullptr)
 			success = false;
@@ -49,6 +54,7 @@ bool init() {
 }
 GameMap game_map;
 MainObject player;
+StatusBar status_bar;
 
 bool loadData() {
 	bool ret = game_map.loadMap(screen);
@@ -63,12 +69,19 @@ bool loadData() {
 		screen,
 		"assets\\player\\BlueWizard\\idle.png",
 		"assets\\player\\BlueWizard\\run.png",
-		"assets\\player\\BlueWizard\\jump.png"
-	);
+		"assets\\player\\BlueWizard\\jump.png");
+
 	player.loadImg("assets\\player\\BlueWizard\\idle.png", screen);
 	player.setClip();
 	player.setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
 
+	status_bar.loadimg(
+		screen,
+		"assets\\screen\\statusbar\\background.png",
+		"assets\\screen\\statusbar\\life.png",
+		"assets\\screen\\statusbar\\mana.png",
+		"assets\\screen\\statusbar\\minimap.png",
+		"assets\\screen\\statusbar\\quit_button.png");
 	return true;
 }
 void close() {
@@ -87,14 +100,16 @@ void start() {
 	if (loadData() == false) return;
 
 	Timer fpsControl;
-	//fpsControl.startGame();
+	
 	bool is_quit = false;
+
 	while (!is_quit) {
 		
 		while (SDL_PollEvent(&event) != NULL) { // bat su kien nguoi dung
 			if (event.type == SDL_QUIT)
 				is_quit = true;
 			player.getInput(event, screen);
+			status_bar.getInput(screen, event, is_quit);
 		}
 		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, SHOW); // mau nen
 		SDL_RenderClear(screen); // clear man hinh
@@ -107,7 +122,10 @@ void start() {
 		player.movePlayer(game_map);
 		player.show(screen);
 
+		status_bar.update(screen, player, game_map);
+		
 		game_map.DrawFrontMap(screen);
+		status_bar.render(screen);
 
 		SDL_RenderPresent(screen); // update lai man hinh
 

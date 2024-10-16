@@ -15,10 +15,11 @@ MainObject::MainObject() {
 	on_ground = false;
 	dash = 0;
 
+	life = 0;
 	died = false;
 	respawn = RESPAWN_TIME;
 
-	countBullet = 5;
+	countBullet = 0;
 
 	frame = CHAR_FRAME;
 	frame_width = 0;
@@ -128,6 +129,7 @@ void MainObject::show(SDL_Renderer* scr) { // Hien thi nhan vat
 		else
 		{
 			died = false;
+			life++;
 			frame = 0;
 			x_pos = x_spawn;
 			y_pos = y_spawn;
@@ -176,13 +178,13 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien
 				{
 					// dat huong trai cho vien dan
 					playerBullet->setDir(LEFT);
-					playerBullet->setRect(this->x_pos, this->y_pos + 40);
+					playerBullet->setRect(this->x_pos, this->y_pos + 50);
 				}
 				else
 				{
 					// dat huong phai cho vien dan
 					playerBullet->setDir(RIGHT);
-					playerBullet->setRect(this->x_pos + this->frame_width - FRAME_SPACE, this->y_pos + 40);
+					playerBullet->setRect(this->x_pos + this->frame_width - FRAME_SPACE, this->y_pos + 50);
 				}
 				// cho phep vien dan di chuyen
 
@@ -226,7 +228,7 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien
 			if (object_ != jump) updateImg(jump);
 			break;
 		case SDLK_k:
-			countBullet = 5;
+			countBullet++;
 			break;
 		}
 	}
@@ -266,7 +268,7 @@ void MainObject::moveBullet(GameMap& game_map, SDL_Renderer* scr)
 			if (playerBullet->getMove() == 1)
 			{
 				SDL_RendererFlip flip = SDL_FLIP_NONE;
-				if (status == LEFT) flip = SDL_FLIP_HORIZONTAL;
+				if (playerBullet->getDir() == LEFT) flip = SDL_FLIP_HORIZONTAL;
 				playerBullet->move(game_map);
 				playerBullet->render(scr, nullptr, flip);
 			}
@@ -377,6 +379,7 @@ void MainObject::checkHit(GameMap& game_map) {
 							}
 							if (block->is_show())
 							{
+
 								y_val = 0;
 							}
 							break;
