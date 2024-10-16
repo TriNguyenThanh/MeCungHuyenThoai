@@ -381,6 +381,7 @@ void StatusBar::update(SDL_Renderer* scr,MainObject& mainChar,GameMap& game_map)
 {
 	life = mainChar.getLife();
 	mana = mainChar.getMana();
+	crystal = mainChar.getcrystal();
 	current_map = game_map.getCurrentMap();
 
 	LifeBorder->update(life, scr);

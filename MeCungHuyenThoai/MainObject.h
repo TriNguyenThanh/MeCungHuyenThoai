@@ -26,8 +26,10 @@ private:
 	bool died;
 	int respawn;
 
-	int countBullet;
+	int countMana;
 
+	std::vector<int> crystal;
+	std::vector<int> spawn_crystal;
 	SDL_Texture* idle = nullptr;
 	SDL_Texture* run = nullptr;
 	SDL_Texture* jump = nullptr;
@@ -54,7 +56,9 @@ public:
 	void movePlayer(GameMap& game_map);
 	void moveBullet(GameMap& game_map, SDL_Renderer* scr);
 	void checkHit(GameMap& game_map);
+	void kill(GameMap& game_map);
 
 	int getLife() const { return life; }
-	int getMana() const { return countBullet; }
+	int getMana() const { return countMana; }
+	std::vector<int> getcrystal() const { return crystal; }
 };
