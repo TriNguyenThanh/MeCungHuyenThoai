@@ -93,5 +93,49 @@
             "status" : 255,
             "angle" : -90
         }
+    ],
+    "items":[
+        {
+            "id": 1,
+            "x": 4,
+            "y": 2,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 2,
+            "x": 26,
+            "y": 3,
+            "name": "violet_mana_crystal"
+        },
+        {
+            "id": 3,
+            "x": 28,
+            "y": 8,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 4,
+            "x": 4,
+            "y": 9,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 5,
+            "x": 2,
+            "y": 13,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 6,
+            "x": 18,
+            "y": 13,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 7,
+            "x": 26,
+            "y": 14,
+            "name": "mana_bottle"
+        }
     ]
 }

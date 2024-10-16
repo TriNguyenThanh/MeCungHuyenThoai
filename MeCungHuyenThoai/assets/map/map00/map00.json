@@ -95,5 +95,31 @@
             "period_time" : 120,
             "status" : 255
         }
+    ],
+    "items":[
+        {
+            "id": 1,
+            "x": 25,
+            "y": 3,
+            "name": "blue_mana_crystal"
+        },
+        {
+            "id": 2,
+            "x": 26,
+            "y": 7,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 3,
+            "x": 21,
+            "y": 11,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 3,
+            "x": 3,
+            "y": 14,
+            "name": "mana_bottle"
+        }
     ]
 }

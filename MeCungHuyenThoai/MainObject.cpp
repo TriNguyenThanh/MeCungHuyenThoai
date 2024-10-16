@@ -19,7 +19,7 @@ MainObject::MainObject() {
 	died = false;
 	respawn = RESPAWN_TIME;
 
-	countBullet = 0;
+	countMana = 0;
 
 	frame = CHAR_FRAME;
 	frame_width = 0;
@@ -29,6 +29,11 @@ MainObject::MainObject() {
 		frame_clip[i].x = frame_clip[i].y = frame_clip[i].w = frame_clip[i].h = 0;
 	}
 
+	for (int i = 0; i < 5; ++i)
+	{
+		crystal.push_back(0);
+		spawn_crystal.push_back(0);
+	}
 
 	input_type.right = input_type.left = input_type.jump = input_type.shoot = input_type.interact = 0;
 	on_ground = false;
@@ -162,12 +167,49 @@ void MainObject::setSpawn(int x, int y) { // dat vi tri hoi sinh cho nhan vat
 		y_pos = rect_.y;
 	}
 }
-
+void MainObject::kill(GameMap& game_map)
+{
+	y_val = 0;
+	died = true;
+	for (int i = 0; i < 5; ++i)
+	{
+		crystal[i] = spawn_crystal[i];
+	}
+	for (const auto& item_ : game_map.getMap().items_list)
+	{
+		if (item_->is_name("blue_mana_crystal"))
+		{
+			item_->setStatus(255 - crystal[0]);
+			break;
+		}
+		else if (item_->is_name("green_mana_crystal"))
+		{
+			item_->setStatus(255 - crystal[1]);
+			break;
+		}
+		else if (item_->is_name("light_blue_mana_crystal"))
+		{
+			item_->setStatus(255 - crystal[2]);
+			break;
+		}
+		else if (item_->is_name("red_mana_crystal"))
+		{
+			item_->setStatus(255 - crystal[3]);
+			break;
+		}
+		else if (item_->is_name("violet_mana_crystal"))
+		{
+			item_->setStatus(255 - crystal[4]);
+			break;
+		}
+	}
+	on_ground = false;
+}
 void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien nguoi dung
 	if (evn.type == SDL_KEYDOWN && died == false) {
 		switch (evn.key.keysym.sym) {
 		case SDLK_j:
-			if (countBullet > 0 && input_type.shoot == 0)
+			if (countMana >= BULLET_MANA_TAKE && input_type.shoot == 0)
 			{
 				input_type.shoot = 1;
 				// vien dan
@@ -189,7 +231,7 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien
 				// cho phep vien dan di chuyen
 
 				playerBullet->setMove(1);
-				countBullet--;
+				countMana -= BULLET_MANA_TAKE;
 
 				playerBullet->setXY_val(BULLET_SPEED, BULLET_SPEED);
 				// them vien dan vao list
@@ -228,7 +270,7 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien
 			if (object_ != jump) updateImg(jump);
 			break;
 		case SDLK_k:
-			countBullet++;
+			countMana += 100;
 			break;
 		}
 	}
@@ -319,23 +361,39 @@ void MainObject::movePlayer(GameMap &game_map) {
 	if ((x_pos + (FRAME_SPACE / 4 * 3)) < 0) {
 		game_map.setCurrentMap(game_map.getCurrentMap() - 1);
 		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		for (int i = 0; i < 5; ++i)
+		{
+			spawn_crystal[i] = crystal[i];
+		}
 		x_pos = MAX_MAP_X * TILE_SIZE - frame_width;
 	}
 	else if ((x_pos + frame_width - (FRAME_SPACE / 4 * 3)) > MAX_MAP_X * TILE_SIZE) {
 		game_map.setCurrentMap(game_map.getCurrentMap() + 1);
 		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		for (int i = 0; i < 5; ++i)
+		{
+			spawn_crystal[i] = crystal[i];
+		}
 		x_pos = 10;
 	}
 	else if (y_pos + frame_hight > SCREEN_HIGHT)
 	{
 		game_map.setCurrentMap(game_map.getCurrentMap() + 3);
 		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		for (int i = 0; i < 5; ++i)
+		{
+			spawn_crystal[i] = crystal[i];
+		}
 		y_pos = 10;
 	}
 	else if (y_pos + 25 < 0)
 	{
 		game_map.setCurrentMap(game_map.getCurrentMap() - 3);
 		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		for (int i = 0; i < 5; ++i)
+		{
+			spawn_crystal[i] = crystal[i];
+		}
 		y_pos = MAX_MAP_Y * TILE_SIZE - frame_hight;
 	}
 }
@@ -361,7 +419,12 @@ void MainObject::checkHit(GameMap& game_map) {
 		// nhan vat huong len tren
 		if (y_val < 0) {
 			// va cham voi block
-			if ((mapData.tile[y1][x1] != 0 || mapData.tile[y1][x2] != 0) && (mapData.tile[y1][x1] != 2 && mapData.tile[y1][x2] != 2)) {
+
+			bool left = (mapData.tile[y1][x1] == 0 || mapData.tile[y1][x1] == 2);
+			bool right = (mapData.tile[y1][x2] == 0 || mapData.tile[y1][x2] == 2);
+
+
+			if (!left || !right) {
 				
 				// va cham voi block an
 				if (mapData.tile[y1][x1] == 4 || mapData.tile[y1][x2] == 4 || mapData.tile[y1][x1] == 5 || mapData.tile[y1][x2] == 5)
@@ -372,9 +435,7 @@ void MainObject::checkHit(GameMap& game_map) {
 						{
 							if (block->isHarm())
 							{
-								y_val = 0;
-								died = true;
-								on_ground = false;
+								kill(game_map);
 								return;
 							}
 							if (block->is_show())
@@ -385,13 +446,49 @@ void MainObject::checkHit(GameMap& game_map) {
 							break;
 						}
 					}
+					
+				}
+				else if (mapData.tile[y1][x1] == 6 || mapData.tile[y1][x2] == 6)
+				{
+					for (const auto& item_ : game_map.getMap().items_list)
+					{
+						if ((item_->is_at(x1, y1) || item_->is_at(x2, y1)) && item_->is_show())
+						{
+							item_->loot();
+							if (item_->is_name("mana_bottle"))
+							{
+								countMana += MANA_BOTTLE_VALUE;
+							}
+							else if (item_->is_name("blue_mana_crystal"))
+							{
+								crystal[0] = SHOW;
+							}
+							else if (item_->is_name("green_mana_crystal"))
+							{
+								crystal[1] = SHOW;
+							}
+							else if (item_->is_name("light_blue_mana_crystal"))
+							{
+								crystal[2] = SHOW;
+							}
+							else if (item_->is_name("red_mana_crystal"))
+							{
+								crystal[3] = SHOW;
+							}
+							else if (item_->is_name("violet_mana_crystal"))
+							{
+								crystal[4] = SHOW;
+							}
+
+							break;
+						}
+					}
 				}
 				else y_val = 0;
 				// va cham voi gai tinh
 				if (mapData.tile[y1][x1] == 3 || mapData.tile[y1][x2] == 3)
 				{
-					died = true;
-					on_ground = false;
+					kill(game_map);
 					return;
 				}
 			}
@@ -399,7 +496,10 @@ void MainObject::checkHit(GameMap& game_map) {
 		// nhan vat huong xuong
 		else if (y_val > 0) {
 			// va cham voi block
-			if ((mapData.tile[y2][x1] != 0 || mapData.tile[y2][x2] != 0) && (mapData.tile[y2][x1] != 2 && mapData.tile[y2][x2] != 2)) {
+			bool left = (mapData.tile[y2][x1] == 0 || mapData.tile[y2][x1] == 2);
+			bool right = (mapData.tile[y2][x2] == 0 || mapData.tile[y2][x2] == 2);
+
+			if (!left || !right) {
 				if (mapData.tile[y2][x1] == 4 || mapData.tile[y2][x2] == 4 || mapData.tile[y2][x1] == 5 || mapData.tile[y2][x2] == 5)
 				{
  					for (const auto& block : game_map.getMap().hidden_block_list)
@@ -408,9 +508,7 @@ void MainObject::checkHit(GameMap& game_map) {
 						{
 							if (block->isHarm())
 							{
-								y_val = 0;
-								died = true;
-								on_ground = false;
+								kill(game_map);
 								return;
 							}
 							if (block->is_show())
@@ -426,6 +524,42 @@ void MainObject::checkHit(GameMap& game_map) {
 										updateImg(idle);
 								}
 							}
+							break;
+						}
+					}	
+				}
+				else if (mapData.tile[y2][x1] == 6 || mapData.tile[y2][x2] == 6)
+				{
+					for (const auto& block : game_map.getMap().items_list)
+					{
+						if ((block->is_at(x1, y2) || block->is_at(x2, y2)) && block->is_show())
+						{
+							block->loot();
+							if (block->is_name("mana_bottle"))
+							{
+								countMana += MANA_BOTTLE_VALUE;
+							}
+							else if (block->is_name("blue_mana_crystal"))
+							{
+								crystal[0] = SHOW;
+							}
+							else if (block->is_name("green_mana_crystal"))
+							{
+								crystal[1] = SHOW;
+							}
+							else if (block->is_name("light_blue_mana_crystal"))
+							{
+								crystal[2] = SHOW;
+							}
+							else if (block->is_name("red_mana_crystal"))
+							{
+								crystal[3] = SHOW;
+							}
+							else if (block->is_name("violet_mana_crystal"))
+							{
+								crystal[4] = SHOW;
+							}
+
 							break;
 						}
 					}
@@ -444,8 +578,7 @@ void MainObject::checkHit(GameMap& game_map) {
 				}
 				if (mapData.tile[y2][x1] == 3 && mapData.tile[y2][x2] == 3)
 				{
-					died = true;
-					on_ground = false;
+					kill(game_map);
 					return;
 				}
 			}
@@ -464,16 +597,52 @@ void MainObject::checkHit(GameMap& game_map) {
 		// Nhan vat di qua phai
 		if (x_val > 0) {
 			bool up = false, down = false;
-			if (mapData.tile[y1][x2] == 0 || mapData.tile[y1][x2] == 2 || mapData.tile[y1][x2] == 5) up = true;
+			if (mapData.tile[y1][x2] == 0 || mapData.tile[y1][x2] == 2 || mapData.tile[y1][x2] == 5 || mapData.tile[y1][x2] == 4) up = true;
 			if (mapData.tile[y2][x2] == 0 || mapData.tile[y2][x2] == 2 || mapData.tile[y2][x2] == 5) down = true;
 
 			if (!up || !down)
 			{
-				if (mapData.tile[y1][x2] == 4 || mapData.tile[y2][x2] == 4)
+				if (mapData.tile[y1][x2] == 6 || mapData.tile[y2][x2] == 6)
+				{
+					for (const auto& block : game_map.getMap().items_list)
+					{
+						if ((block->is_at(x2, y1) || block->is_at(x2, y2)) && block->is_show())
+						{
+							block->loot();
+							if (block->is_name("mana_bottle"))
+							{
+								countMana += MANA_BOTTLE_VALUE;
+							}
+							else if (block->is_name("blue_mana_crystal"))
+							{
+								crystal[0] = SHOW;
+							}
+							else if (block->is_name("green_mana_crystal"))
+							{
+								crystal[1] = SHOW;
+							}
+							else if (block->is_name("light_blue_mana_crystal"))
+							{
+								crystal[2] = SHOW;
+							}
+							else if (block->is_name("red_mana_crystal"))
+							{
+								crystal[3] = SHOW;
+							}
+							else if (block->is_name("violet_mana_crystal"))
+							{
+								crystal[4] = SHOW;
+							}
+
+							break;
+						}
+					}
+				}
+				else if (mapData.tile[y1][x2] == 4 || mapData.tile[y2][x2] == 4)
 				{
 					for (const auto& block : game_map.getMap().hidden_block_list)
 					{
-						if (block->is_at(x2, y1) && block->is_show() || (block->is_at(x2, y2) && block->is_show()))
+						if ((block->is_at(x2, y1) || block->is_at(x2, y2)) && block->is_show())
 						{
 							x_val = 0;
 							x_pos = (x1 * TILE_SIZE) - x_val - FRAME_SPACE;
@@ -490,14 +659,49 @@ void MainObject::checkHit(GameMap& game_map) {
 		}
 		// Nhan vat di qua trai
 		else if (x_val < 0) {
-			bool up = false, down = false;
-			if (mapData.tile[y1][x1] == 0 || mapData.tile[y1][x1] == 2 || mapData.tile[y1][x1] == 5) up = true;
-			if (mapData.tile[y2][x1] == 0 || mapData.tile[y2][x1] == 2 || mapData.tile[y2][x1] == 5) down = true;
+			
+			bool up = (mapData.tile[y1][x1] == 0 || mapData.tile[y1][x1] == 2 || mapData.tile[y1][x1] == 5 || mapData.tile[y1][x1] == 4);
+			bool down = (mapData.tile[y2][x1] == 0 || mapData.tile[y2][x1] == 2 || mapData.tile[y2][x1] == 5);
 
 
 			if (!up || !down)
 			{
-				if (mapData.tile[y1][x1] == 4 || mapData.tile[y2][x1] == 4)
+				if (mapData.tile[y1][x1] == 6 || mapData.tile[y2][x1] == 6)
+				{
+					for (const auto& block : game_map.getMap().items_list)
+					{
+						if ((block->is_at(x1, y1) || block->is_at(x1, y1)) && block->is_show())
+						{
+							block->loot();
+							if (block->is_name("mana_bottle"))
+							{
+								countMana += MANA_BOTTLE_VALUE;
+							}
+							else if (block->is_name("blue_mana_crystal"))
+							{
+								crystal[0] = SHOW;
+							}
+							else if (block->is_name("green_mana_crystal"))
+							{
+								crystal[1] = SHOW;
+							}
+							else if (block->is_name("light_blue_mana_crystal"))
+							{
+								crystal[2] = SHOW;
+							}
+							else if (block->is_name("red_mana_crystal"))
+							{
+								crystal[3] = SHOW;
+							}
+							else if (block->is_name("violet_mana_crystal"))
+							{
+								crystal[4] = SHOW;
+							}
+							break;
+						}
+					}
+				}
+				else if (mapData.tile[y1][x1] == 4 || mapData.tile[y2][x1] == 4)
 				{
 					for (const auto& block : game_map.getMap().hidden_block_list)
 					{

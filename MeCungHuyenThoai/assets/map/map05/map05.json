@@ -67,5 +67,19 @@
             "status" : 255,
             "angle" : 90
         }
+    ],
+    "items":[
+        {
+            "id": 1,
+            "x": 19,
+            "y": 9,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 2,
+            "x": 26,
+            "y": 14,
+            "name": "red_mana_crystal"
+        }
     ]
 }
