@@ -32,6 +32,9 @@
     <ClCompile Include="ItemObject.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseObject.h">
@@ -65,6 +68,9 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="ItemObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

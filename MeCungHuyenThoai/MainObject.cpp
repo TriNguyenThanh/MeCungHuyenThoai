@@ -87,7 +87,7 @@ void MainObject::setClip() { // tao ra cac khung hinh chuyen dong cho nhan vat
 		}
 	}
 }
-void MainObject::show(SDL_Renderer* scr) { // Hien thi nhan vat
+void MainObject::show(SDL_Renderer* scr, const SoundEffect& effect) { // Hien thi nhan vat
 	
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (status == LEFT) {
@@ -144,8 +144,11 @@ void MainObject::show(SDL_Renderer* scr) { // Hien thi nhan vat
 	}
 	else if (input_type.left == 1 || input_type.right == 1)
 	{
-		if (tmp % 10 >= 6)
+		if (tmp % 10 >= 6 && on_ground == true)
+		{
 			angle = 3;
+			effect.playWalk();
+		}
 	}
 	if (status == LEFT)
 		angle = -angle;
@@ -167,10 +170,14 @@ void MainObject::setSpawn(int x, int y) { // dat vi tri hoi sinh cho nhan vat
 		y_pos = rect_.y;
 	}
 }
-void MainObject::kill(GameMap& game_map)
+void MainObject::kill(GameMap& game_map, const SoundEffect& effect)
 {
 	y_val = 0;
-	died = true;
+	if (died == false)
+	{
+		died = true;
+		effect.playDeath();
+	}
 	for (int i = 0; i < 5; ++i)
 	{
 		crystal[i] = spawn_crystal[i];
@@ -203,15 +210,16 @@ void MainObject::kill(GameMap& game_map)
 			break;
 		}
 	}
-	on_ground = false;
+	//on_ground = false;
 }
-void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien nguoi dung
+void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr, const SoundEffect& effect) { // ham bat su kien nguoi dung
 	if (evn.type == SDL_KEYDOWN && died == false) {
 		switch (evn.key.keysym.sym) {
 		case SDLK_j:
 			if (countMana >= BULLET_MANA_TAKE && input_type.shoot == 0)
 			{
 				input_type.shoot = 1;
+				effect.playFire();
 				// vien dan
 				Bullet* playerBullet = new Bullet;
 				playerBullet->loadImg("assets\\player\\bullet\\blue.png", scr);
@@ -324,7 +332,7 @@ void MainObject::moveBullet(GameMap& game_map, SDL_Renderer* scr)
 
 	}
 }
-void MainObject::movePlayer(GameMap &game_map) {
+void MainObject::movePlayer(GameMap &game_map, const SoundEffect& effect) {
 	x_val = 0;
 	y_val += GRAVITY; // Nhan vat luon chiu tac dung cua trong luc nen y_val += gravity
 	if (y_val > PLAYER_MAX_FALL_SPEED) y_val = PLAYER_MAX_FALL_SPEED;
@@ -338,6 +346,7 @@ void MainObject::movePlayer(GameMap &game_map) {
 	if (input_type.jump == 1) {
 		if (on_ground == true) {
 			y_val = -(PLAYER_JUMP + dash); // nhan vat nhay thi tang do cao cho nhan vat
+			effect.playJump();
 		}
 		on_ground = false;
 		input_type.jump = 0; // nhan vat chi nhay duoc 1 lan nen cho jump = 0
@@ -348,7 +357,7 @@ void MainObject::movePlayer(GameMap &game_map) {
 		y_val += GRAVITY;
 		if (y_val > PLAYER_MAX_FALL_SPEED) y_val = PLAYER_MAX_FALL_SPEED;
 	}
-	checkHit(game_map); // kiem tra va cham
+	checkHit(game_map, effect); // kiem tra va cham
 
 	// Cap nhat lai vi tri
 	x_pos += x_val;
@@ -394,7 +403,7 @@ void MainObject::movePlayer(GameMap &game_map) {
 		y_pos = MAX_MAP_Y * TILE_SIZE - frame_hight;
 	}
 }
-void MainObject::checkHit(GameMap& game_map) {
+void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 	MapObject mapData = game_map.getMap();
 	int x1 = 0, x2 = 0;
 	int y1 = 0, y2 = 0;
@@ -411,7 +420,11 @@ void MainObject::checkHit(GameMap& game_map) {
 	{
 		// nhan vat leo day di len
 		if ((mapData.tile[y1][x1] == 2 || mapData.tile[y1][x2] == 2) && input_type.climb == 1)
+		{
 			y_val = -PLAYER_CLIMB;
+			if (!Mix_Playing(15))
+				effect.playClimb();
+		}	
 
 		// nhan vat huong len tren
 		if (y_val < 0) {
@@ -432,12 +445,11 @@ void MainObject::checkHit(GameMap& game_map) {
 						{
 							if (block->isHarm())
 							{
-								kill(game_map);
+								kill(game_map, effect);
 								return;
 							}
 							if (block->is_show())
 							{
-
 								y_val = 0;
 							}
 							break;
@@ -481,11 +493,15 @@ void MainObject::checkHit(GameMap& game_map) {
 						}
 					}
 				}
-				else y_val = 0;
+				else
+				{
+					y_val = 0;
+					
+				}
 				// va cham voi gai tinh
 				if (mapData.tile[y1][x1] == 3 || mapData.tile[y1][x2] == 3)
 				{
-					kill(game_map);
+					kill(game_map, effect);
 					return;
 				}
 			}
@@ -505,14 +521,19 @@ void MainObject::checkHit(GameMap& game_map) {
 						{
 							if (block->isHarm())
 							{
-								kill(game_map);
+								kill(game_map, effect);
 								return;
 							}
 							if (block->is_show())
 							{
-								y_pos = y2 * TILE_SIZE - frame_hight - 1;
+								y_pos = y2 * TILE_SIZE - frame_hight - 2;
 								y_val = 0;
-								on_ground = true;
+								if (on_ground == false)
+								{
+									on_ground = true;
+									effect.playLand();
+								}
+								
 								if (object_ == jump)
 								{
 									if (input_type.left == 1 || input_type.right == 1)
@@ -535,28 +556,32 @@ void MainObject::checkHit(GameMap& game_map) {
 							if (block->is_name("mana_bottle"))
 							{
 								countMana += MANA_BOTTLE_VALUE;
+								effect.playManaPickUp();
 							}
-							else if (block->is_name("blue_mana_crystal"))
+							else
 							{
-								crystal[0] = SHOW;
+								effect.playCrystalPickUp();
+								if (block->is_name("blue_mana_crystal"))
+								{
+									crystal[0] = SHOW;
+								}
+								else if (block->is_name("green_mana_crystal"))
+								{
+									crystal[1] = SHOW;
+								}
+								else if (block->is_name("light_blue_mana_crystal"))
+								{
+									crystal[2] = SHOW;
+								}
+								else if (block->is_name("red_mana_crystal"))
+								{
+									crystal[3] = SHOW;
+								}
+								else if (block->is_name("violet_mana_crystal"))
+								{
+									crystal[4] = SHOW;
+								}
 							}
-							else if (block->is_name("green_mana_crystal"))
-							{
-								crystal[1] = SHOW;
-							}
-							else if (block->is_name("light_blue_mana_crystal"))
-							{
-								crystal[2] = SHOW;
-							}
-							else if (block->is_name("red_mana_crystal"))
-							{
-								crystal[3] = SHOW;
-							}
-							else if (block->is_name("violet_mana_crystal"))
-							{
-								crystal[4] = SHOW;
-							}
-
 							break;
 						}
 					}
@@ -564,7 +589,11 @@ void MainObject::checkHit(GameMap& game_map) {
 				else
 				{
 					y_val = 0;
-					on_ground = true;
+					if (on_ground == false)
+					{
+						on_ground = true;
+						effect.playLand();
+					}
 					if (object_ == jump)
 					{
 						if (input_type.left == 1 || input_type.right == 1)
@@ -575,7 +604,7 @@ void MainObject::checkHit(GameMap& game_map) {
 				}
 				if (mapData.tile[y2][x1] == 3 && mapData.tile[y2][x2] == 3)
 				{
-					kill(game_map);
+					kill(game_map, effect);
 					return;
 				}
 			}
@@ -609,28 +638,32 @@ void MainObject::checkHit(GameMap& game_map) {
 							if (block->is_name("mana_bottle"))
 							{
 								countMana += MANA_BOTTLE_VALUE;
+								effect.playManaPickUp();
 							}
-							else if (block->is_name("blue_mana_crystal"))
+							else
 							{
-								crystal[0] = SHOW;
+								effect.playCrystalPickUp();
+								if (block->is_name("blue_mana_crystal"))
+								{
+									crystal[0] = SHOW;
+								}
+								else if (block->is_name("green_mana_crystal"))
+								{
+									crystal[1] = SHOW;
+								}
+								else if (block->is_name("light_blue_mana_crystal"))
+								{
+									crystal[2] = SHOW;
+								}
+								else if (block->is_name("red_mana_crystal"))
+								{
+									crystal[3] = SHOW;
+								}
+								else if (block->is_name("violet_mana_crystal"))
+								{
+									crystal[4] = SHOW;
+								}
 							}
-							else if (block->is_name("green_mana_crystal"))
-							{
-								crystal[1] = SHOW;
-							}
-							else if (block->is_name("light_blue_mana_crystal"))
-							{
-								crystal[2] = SHOW;
-							}
-							else if (block->is_name("red_mana_crystal"))
-							{
-								crystal[3] = SHOW;
-							}
-							else if (block->is_name("violet_mana_crystal"))
-							{
-								crystal[4] = SHOW;
-							}
-
 							break;
 						}
 					}
@@ -673,26 +706,31 @@ void MainObject::checkHit(GameMap& game_map) {
 							if (block->is_name("mana_bottle"))
 							{
 								countMana += MANA_BOTTLE_VALUE;
+								effect.playManaPickUp();
 							}
-							else if (block->is_name("blue_mana_crystal"))
+							else
 							{
-								crystal[0] = SHOW;
-							}
-							else if (block->is_name("green_mana_crystal"))
-							{
-								crystal[1] = SHOW;
-							}
-							else if (block->is_name("light_blue_mana_crystal"))
-							{
-								crystal[2] = SHOW;
-							}
-							else if (block->is_name("red_mana_crystal"))
-							{
-								crystal[3] = SHOW;
-							}
-							else if (block->is_name("violet_mana_crystal"))
-							{
-								crystal[4] = SHOW;
+								effect.playCrystalPickUp();
+								if (block->is_name("blue_mana_crystal"))
+								{
+									crystal[0] = SHOW;
+								}
+								else if (block->is_name("green_mana_crystal"))
+								{
+									crystal[1] = SHOW;
+								}
+								else if (block->is_name("light_blue_mana_crystal"))
+								{
+									crystal[2] = SHOW;
+								}
+								else if (block->is_name("red_mana_crystal"))
+								{
+									crystal[3] = SHOW;
+								}
+								else if (block->is_name("violet_mana_crystal"))
+								{
+									crystal[4] = SHOW;
+								}
 							}
 							break;
 						}

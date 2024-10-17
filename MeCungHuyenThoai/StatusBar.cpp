@@ -246,9 +246,6 @@ void QuitButton::getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit)
 		SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
 		mouse.x = x;
 		mouse.y = y;
-
-		std::cout << mouse.x << ' ' << mouse.y << '\n';
-		std::cout << rect_.x << ' ' << rect_.y << '\n';
 		if (rect_.x <= mouse.x && mouse.x <= rect_.x + TILE_SIZE && rect_.y <= mouse.y && mouse.y <= rect_.y + TILE_SIZE)
 		{
 			quit = true;

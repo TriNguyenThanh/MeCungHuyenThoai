@@ -5,7 +5,9 @@ bool init() {
 	bool success = true;
 	// chuan bi moi truong tao cua so, render, am thanh
 	bool ret = (SDL_Init(SDL_INIT_VIDEO) >= 0);
-	ret = (TTF_Init() != -1);
+	ret = (	TTF_Init() != -1 &&
+			Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) != -1 &&
+			Mix_AllocateChannels(16) != -1);
 	if (!ret)
 		success = false;
 	else
@@ -55,33 +57,47 @@ bool init() {
 GameMap game_map;
 MainObject player;
 StatusBar status_bar;
+SoundEffect sound_effect;
 
 bool loadData() {
 	bool ret = game_map.loadMap(screen);
-	if (ret == false)
-	{
-		return false;
-	}
+	if (!ret) return false;
+
 	int current_map_index = 1;
 	game_map.setCurrentMap(current_map_index);
 
-	player.loadAction(
+	ret = player.loadAction(
 		screen,
 		"assets\\player\\BlueWizard\\idle.png",
 		"assets\\player\\BlueWizard\\run.png",
 		"assets\\player\\BlueWizard\\jump.png");
-
-	player.loadImg("assets\\player\\BlueWizard\\idle.png", screen);
+	if (!ret) return false;
+	ret = player.loadImg("assets\\player\\BlueWizard\\idle.png", screen);
+	if (!ret) return false;
 	player.setClip();
 	player.setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
 
-	status_bar.loadimg(
+	ret = status_bar.loadimg(
 		screen,
 		"assets\\screen\\statusbar\\background.png",
 		"assets\\screen\\statusbar\\life.png",
 		"assets\\screen\\statusbar\\mana.png",
 		"assets\\screen\\statusbar\\minimap.png",
 		"assets\\screen\\statusbar\\quit_button.png");
+	if (!ret) return false;
+	// load am thanh
+	ret = sound_effect.LoadSound(
+		"assets\\sound\\effect\\climb.wav",
+		"assets\\sound\\effect\\crystal_pick_up.wav",
+		"assets\\sound\\effect\\mana_bottle_pick_up.wav",
+		"assets\\sound\\effect\\jump.wav",
+		"assets\\sound\\effect\\land.wav",
+		"assets\\sound\\effect\\fire.wav",
+		"assets\\sound\\effect\\death.wav",
+		"assets\\sound\\effect\\step_on_grass.wav",
+		"assets\\sound\\music\\background.mp3",
+		"assets\\sound\\music\\victory.mp3");
+	if (!ret) return false;
 	return true;
 }
 void close() {
@@ -92,6 +108,8 @@ void close() {
 	SDL_DestroyWindow(window); //giai phong window control
 	window = NULL;
 
+	sound_effect.free();
+	Mix_CloseAudio();
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -101,6 +119,7 @@ void start() {
 
 	Timer fpsControl;
 	
+	sound_effect.playBackground();
 	bool is_quit = false;
 
 	while (!is_quit) {
@@ -108,7 +127,7 @@ void start() {
 		while (SDL_PollEvent(&event) != NULL) { // bat su kien nguoi dung
 			if (event.type == SDL_QUIT)
 				is_quit = true;
-			player.getInput(event, screen);
+			player.getInput(event, screen, sound_effect);
 			status_bar.getInput(screen, event, is_quit);
 		}
 		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, SHOW); // mau nen
@@ -119,8 +138,8 @@ void start() {
 		game_map.DrawHiddenObject(screen);
 
 		player.moveBullet(game_map, screen);
-		player.movePlayer(game_map);
-		player.show(screen);
+		player.movePlayer(game_map, sound_effect);
+		player.show(screen, sound_effect);
 
 		status_bar.update(screen, player, game_map);
 		

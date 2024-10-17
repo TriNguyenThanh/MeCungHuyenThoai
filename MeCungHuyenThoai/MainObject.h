@@ -4,6 +4,7 @@
 #include "BaseObject.h"
 #include "BulletObject.h"
 #include "Map.h"
+#include "Sound.h"
 
 class MainObject : public BaseObject {
 private:
@@ -50,13 +51,13 @@ public:
 	void setSpawn(int x, int y);
 	bool getDied() { return died; }
 	void setDiedToFalse() { died = false; }
-	void show(SDL_Renderer* scr);
+	void show(SDL_Renderer* scr, const SoundEffect& effect);
 	void setClip();
-	void getInput(SDL_Event evn, SDL_Renderer *scr);
-	void movePlayer(GameMap& game_map);
+	void getInput(SDL_Event evn, SDL_Renderer *scr, const SoundEffect& effect);
+	void movePlayer(GameMap& game_map, const SoundEffect& effect);
 	void moveBullet(GameMap& game_map, SDL_Renderer* scr);
-	void checkHit(GameMap& game_map);
-	void kill(GameMap& game_map);
+	void checkHit(GameMap& game_map, const SoundEffect& effect);
+	void kill(GameMap& game_map, const SoundEffect& effect);
 
 	int getLife() const { return life; }
 	int getMana() const { return countMana; }
