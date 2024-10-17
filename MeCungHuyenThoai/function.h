@@ -67,8 +67,8 @@ const SDL_Color YELLOW = { 246, 255, 0 };
 #define FRAME_SPACE 86
 #define RESPAWN_TIME 60
 #define BULLET_SPEED 16
-#define BULLET_MANA_TAKE 100
-#define MANA_BOTTLE_VALUE 100
+#define BULLET_MANA_TAKE 10
+#define MANA_BOTTLE_VALUE 10
 
 struct InputType
 {

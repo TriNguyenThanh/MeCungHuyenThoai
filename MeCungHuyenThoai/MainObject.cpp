@@ -269,9 +269,6 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr) { // ham bat su kien
 			input_type.jump = 1;
 			if (object_ != jump) updateImg(jump);
 			break;
-		case SDLK_k:
-			countMana += 100;
-			break;
 		}
 	}
 	else if (evn.type == SDL_KEYUP) {
@@ -513,7 +510,7 @@ void MainObject::checkHit(GameMap& game_map) {
 							}
 							if (block->is_show())
 							{
-								y_pos = y2 * TILE_SIZE - frame_hight;
+								y_pos = y2 * TILE_SIZE - frame_hight - 1;
 								y_val = 0;
 								on_ground = true;
 								if (object_ == jump)
