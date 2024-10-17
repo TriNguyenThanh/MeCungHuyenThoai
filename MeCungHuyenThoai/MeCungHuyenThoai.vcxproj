@@ -145,6 +145,7 @@
     <ClCompile Include="MainObject.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="SetUp.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="StatusBar.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +159,7 @@
     <ClInclude Include="MainObject.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="SetUp.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="StatusBar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
