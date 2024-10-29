@@ -1,0 +1,142 @@
+{
+    "spawn" :
+    {
+        "x" : 0,
+        "y" : 13
+    },
+    "HiddenBlock" :[
+        {
+            "id" : 1,
+            "name" : "rock",
+            "x" : 19,
+            "y" : 4,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 150,
+            "status" : 0
+        },
+        {
+            "id" : 2,
+            "name" : "rock",
+            "x" : 16,
+            "y" : 6,
+            "harm" : false,
+            "time" : 75,
+            "period_time" : 150,
+            "status" : 255
+        },
+        {
+            "id" : 3,
+            "name" : "rock",
+            "x" : 13,
+            "y" : 8,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 150,
+            "status" : 0
+        },
+        {
+            "id" : 4,
+            "name" : "thorn",
+            "x" : 26,
+            "y" : 9,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 150,
+            "status" : 0
+        },
+        {
+            "id" : 5,
+            "name" : "rock",
+            "x" : 10,
+            "y" : 10,
+            "harm" : false,
+            "time" : 75,
+            "period_time" : 150,
+            "status" : 255
+        },
+        {
+            "id" : 6,
+            "name" : "rock",
+            "x" : 7,
+            "y" : 12,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 150,
+            "status" : 0
+        },
+        {
+            "id" : 7,
+            "name" : "rock",
+            "x" : 13,
+            "y" : 12,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 150,
+            "status" : 0
+        },
+        {
+            "id" : 8,
+            "name" : "rock",
+            "x" : 16,
+            "y" : 12,
+            "harm" : false,
+            "time" : 75,
+            "period_time" : 150,
+            "status" : 255
+        }
+    ],
+    "items":[
+        {
+            "id": 1,
+            "x": 24,
+            "y": 2,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 2,
+            "x": 25,
+            "y": 8,
+            "name": "blue_mana_crystal"
+        },
+        {
+            "id": 3,
+            "x": 16,
+            "y": 10,
+            "name": "mana_bottle"
+        }
+    ],
+    "threads":[
+        {
+            "id": 1,
+            "x": 1,
+            "y": 4,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "target": "STRAIGHTLINE",
+            "delay": 15
+        },
+        {
+            "id": 2,
+            "x": 1,
+            "y": 8,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "target": "STRAIGHTLINE",
+            "delay": 15
+        },
+        {
+            "id": 3,
+            "x": 20,
+            "y": 2,
+            "name": "bat",
+            "move": true,
+            "dir": "down",
+            "x_des": 20,
+            "y_des": 6,
+            "fire": false
+        }
+    ]
+}

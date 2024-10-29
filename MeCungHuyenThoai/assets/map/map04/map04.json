@@ -1,0 +1,188 @@
+{
+    "spawn" : 
+    {
+        "x" : 0,
+        "y" : 1
+    },
+    "HiddenBlock" : [
+        {
+            "id" : 1,
+            "name" : "thorn",
+            "x": 1,
+            "y" : 11,
+            "harm" : false,
+            "period_time" : 100,
+            "time" : 10,
+            "status" : 0,
+            "flip" : "VERTICAL"
+        },
+        {
+            "id" : 2,
+            "name" : "thorn",
+            "x": 2,
+            "y" : 11,
+            "harm" : false,
+            "time" : 15,
+            "period_time" : 100,
+            "status" : 0,
+            "flip" : "VERTICAL"
+        },
+        {
+            "id" : 3,
+            "name" : "thorn",
+            "x": 3,
+            "y" : 11,
+            "harm" : false,
+            "time" : 20,
+            "period_time" : 100,
+            "status" : 0,
+            "flip" : "VERTICAL"
+        },
+        {
+            "id" : 4,
+            "name" : "thorn",
+            "x": 4,
+            "y" : 11,
+            "harm" : false,
+            "time" : 25,
+            "period_time" : 100,
+            "status" : 0,
+            "flip" : "VERTICAL"
+        },
+        {
+            "id" : 5,
+            "name" : "thorn",
+            "x": 5,
+            "y" : 11,
+            "harm" : false,
+            "time" : 30,
+            "period_time" : 100,
+            "status" : 0,
+            "flip" : "VERTICAL"
+        },
+        {
+            "id" : 6,
+            "name" : "thorn",
+            "x": 6,
+            "y" : 11,
+            "harm" : false,
+            "time" : 35,
+            "period_time" : 100,
+            "status" : 0,
+            "flip" : "VERTICAL"
+        },
+        {
+            "id" : 7,
+            "name" : "rock",
+            "x" : 29,
+            "y" : 13,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 0,
+            "status" : 255,
+            "angle" : -90
+        },
+        {
+            "id" : 8,
+            "name" : "rock",
+            "x" : 29,
+            "y" : 14,
+            "harm" : false,
+            "time" : 0,
+            "period_time" : 0,
+            "status" : 255,
+            "angle" : -90
+        }
+    ],
+    "items":[
+        {
+            "id": 1,
+            "x": 4,
+            "y": 2,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 2,
+            "x": 26,
+            "y": 2,
+            "name": "red_mana_crystal"
+        },
+        {
+            "id": 3,
+            "x": 28,
+            "y": 8,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 4,
+            "x": 4,
+            "y": 9,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 5,
+            "x": 2,
+            "y": 13,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 6,
+            "x": 18,
+            "y": 13,
+            "name": "mana_bottle"
+        },
+        {
+            "id": 7,
+            "x": 26,
+            "y": 14,
+            "name": "mana_bottle"
+        }
+    ],
+    "threads":[
+        {
+            "id": 1,
+            "x": 7,
+            "y": 8,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "delay": 15
+        },
+        {
+            "id": 2,
+            "x": 19,
+            "y": 6,
+            "name": "bat",
+            "move": true,
+            "dir": "down",
+            "x_des": 19,
+            "y_des": 9,
+            "fire": true,
+            "delay":15
+        },
+        {
+            "id": 3,
+            "x": 22,
+            "y": 3,
+            "name": "bat",
+            "move": true,
+            "dir": "down",
+            "x_des": 22,
+            "y_des": 7,
+            "fire": true,
+            "delay":15
+        },
+        {
+            "id": 4,
+            "x": 22,
+            "y": 9,
+            "name": "bat",
+            "move": true,
+            "dir": "down",
+            "x_des": 22,
+            "y_des": 13,
+            "fire": true,
+            "delay":15
+        }
+    ]
+}

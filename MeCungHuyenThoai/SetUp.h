@@ -1,15 +1,14 @@
-#ifndef SET_UP_H_
-#define SET_UP_H_
+#pragma once
 
 #include "function.h"
 #include "BaseObject.h"
 #include "Map.h"
 #include "FpsControl.h"
 #include "MainObject.h"
+#include "StatusBar.h"
+#include "Sound.h"
 
 bool init();
 bool loadData();
 void close();
 void start();
-
-#endif
