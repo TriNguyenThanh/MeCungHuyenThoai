@@ -7,6 +7,7 @@
 #include "MainObject.h"
 #include "StatusBar.h"
 #include "Sound.h"
+#include "Menu.h"
 
 bool init();
 bool loadData();
