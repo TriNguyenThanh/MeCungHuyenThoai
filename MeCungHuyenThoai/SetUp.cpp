@@ -42,7 +42,7 @@ MainObject player;
 bool loadData() {
 	bool ret = game_map.loadMap(screen);
 	if (ret == false) return false;
-	int current_map_index = 4;
+	int current_map_index = 1;
 	game_map.setCurrentMap(current_map_index);
 
 	player.loadAction(
