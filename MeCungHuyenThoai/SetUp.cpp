@@ -28,6 +28,9 @@ bool init() {
 		//tao cua so
 		window = SDL_CreateWindow("ME CUNG HUYEN THOAI", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  display.w, display.h, SDL_WINDOW_SHOWN);
 
+		SDL_Surface* icon = IMG_Load("assets\\icon\\icon.png");
+		SDL_SetWindowIcon(window, icon);
+
 		if (window == nullptr)
 			success = false;
 		else
@@ -59,12 +62,14 @@ GameMap game_map;
 MainObject player;
 StatusBar status_bar;
 SoundEffect sound_effect;
+Menu start_menu;
+Menu tutorial_menu;
 
 // flags
 bool is_quit = false;
 bool is_start = false;
 bool is_restart = false;
-bool is_pause = false;
+bool is_unpause = false;
 bool is_win = false;
 bool is_lose = false;
 
@@ -110,6 +115,20 @@ bool loadData() {
 		"assets\\sound\\music\\BossFight.mp3",
 		"assets\\sound\\music\\victory.mp3");
 	if (!ret) return false;
+	
+	start_menu.setText("THE LEGENDARY MAZE", "START", "QUIT");
+	start_menu.setFontSize(120, 70);
+	start_menu.setRect(450, 286, 655, 692, 1130, 692);
+	ret = start_menu.loadImg(
+		"assets\\screen\\Menu\\MainMenu.png",
+		"assets\\screen\\Menu\\MainMenuBG.png",
+		"assets\\screen\\Menu\\MainMenuBG_run.png",
+		Deutschland, screen);
+
+	tutorial_menu.setText()
+
+
+	if (!ret) return false;
 	return true;
 }
 void close() {
@@ -130,7 +149,6 @@ void restart()
 	if (is_restart)
 	{
 		game_map.clear();
-		player.reset();
 
 		bool ret = game_map.loadMap(screen);
 		if (!ret) return;
@@ -138,12 +156,13 @@ void restart()
 		int current_map_index = 1;
 		game_map.setCurrentMap(current_map_index);
 		player.setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
-		player.kill(game_map, sound_effect);
+		player.reset();
+		//player.kill(game_map, sound_effect);
 	}
-	is_start = true;
+	is_start = false;
 	is_quit = false;
 	is_restart = false;
-	is_pause = false;
+	is_unpause = false;
 	is_win = false;
 	is_lose = false;
 }
@@ -165,10 +184,13 @@ void start() {
 				is_quit = true;
 			player.getInput(event, screen, sound_effect);
 			status_bar.getInput(screen, event, is_quit, is_restart);
-
+			if (is_lose || is_win)
+				start_menu.click(screen, event, is_restart, is_quit);
+			else if (!is_unpause)
+				start_menu.click(screen, event, is_unpause, is_quit);
 			if (event.type == SDL_KEYDOWN)
 			{
-				if (ADMIN) // event.key.keysym.sym >= 0 && event.key.keysym.sym <= 5
+				if (ADMIN)
 				{
 					switch (event.key.keysym.sym)
 					{
@@ -203,16 +225,21 @@ void start() {
 				switch (event.key.keysym.sym)
 				{
 				case SDLK_ESCAPE:
-					is_pause = (is_pause == false);
+					is_unpause = (is_unpause == false);
 				}
+			}
+			if (event.type == SDL_MOUSEMOTION)
+			{
+				if (!is_unpause)
+					start_menu.hover(screen);
 			}
 		}
 		if (is_restart) restart();
 		if (is_win || is_lose)
 		{
-			is_pause = true;
+			is_unpause = false;
 		}
-		if (!is_pause)
+		if (is_unpause)
 		{
 			SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, SHOW); // mau nen
 			SDL_RenderClear(screen); // clear man hinh
@@ -221,14 +248,19 @@ void start() {
 			game_map.DrawHiddenObject(screen);
 			game_map.update(player.getRect(), screen);
 
-
 			player.moveBullet(game_map, screen);
 			player.movePlayer(game_map, sound_effect);
 			player.show(screen, sound_effect);
 			game_map.DrawFrontMap(screen);
+			status_bar.update(screen, player, game_map, is_win, is_lose);
+			status_bar.render(screen);
 		}
-		status_bar.update(screen, player, game_map, is_win, is_lose);
-		status_bar.render(screen);
+		else
+		{
+			start_menu.update();
+			start_menu.render(screen);
+		}
+
 		fpsControl.drawFPS(screen);
 		SDL_RenderPresent(screen); // update lai man hinh
 
