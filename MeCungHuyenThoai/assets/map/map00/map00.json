@@ -8,46 +8,6 @@
         {
             "id" : 1,
             "name" : "thorn",
-            "x" : 12,
-            "y": 4,
-            "harm": true,
-            "time" : 60,
-            "period_time" : 120,
-            "status" : 255
-        },
-        {
-            "id" : 2,
-            "name" : "thorn",
-            "x" : 14,
-            "y": 4,
-            "harm": false,
-            "time" : 0,
-            "period_time" : 120,
-            "status" : 0
-        },
-        {
-            "id" : 3,
-            "name" : "thorn",
-            "x" : 17,
-            "y": 4,
-            "harm": true,
-            "time" : 60,
-            "period_time" : 120,
-            "status" : 255
-        },
-        {
-            "id" : 4,
-            "name" : "thorn",
-            "x" : 20,
-            "y": 4,
-            "harm": false,
-            "time" : 0,
-            "period_time" : 120,
-            "status" : 0
-        },
-        {
-            "id" : 5,
-            "name" : "thorn",
             "x" : 9,
             "y": 6,
             "harm": false,
@@ -56,7 +16,7 @@
             "status" : 0
         },        
         {
-            "id" : 6,
+            "id" : 2,
             "name" : "thorn",
             "x" : 12,
             "y": 8,
@@ -66,7 +26,7 @@
             "status" : 255
         },
         {
-            "id" : 7,
+            "id" : 3,
             "name" : "thorn",
             "x" : 20,
             "y": 8,
@@ -76,7 +36,7 @@
             "status" : 0
         },
         {
-            "id" : 8,
+            "id" : 4,
             "name" : "thorn",
             "x" : 15,
             "y": 10,
@@ -86,7 +46,7 @@
             "status" : 0
         },
         {
-            "id" : 9,
+            "id" : 5,
             "name" : "thorn",
             "x" : 17,
             "y": 10,
@@ -101,7 +61,7 @@
             "id": 1,
             "x": 25,
             "y": 3,
-            "name": "blue_mana_crystal"
+            "name": "green_mana_crystal"
         },
         {
             "id": 2,
@@ -120,6 +80,46 @@
             "x": 3,
             "y": 14,
             "name": "mana_bottle"
+        }
+    ],
+    "threads":[
+        {
+            "id": 1,
+            "x": 1,
+            "y": 2,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "delay": 15,
+            "target": "STRAIGHTLINE",
+            "speed": 15
+        },
+        {
+            "id": 2,
+            "x": 24,
+            "y": 6,
+            "name": "goblin",
+            "move": false,
+            "fire": false
+        },
+        {
+            "id": 3,
+            "x": 8,
+            "y": 12,
+            "name": "goblin",
+            "move": false,
+            "fire": false
+        },
+        {
+            "id": 4,
+            "x": 2,
+            "y": 10,
+            "name": "bat",
+            "move":true,
+            "dir": "right",
+            "x_des": 6,
+            "y_des": 10,
+            "fire": false
         }
     ]
 }

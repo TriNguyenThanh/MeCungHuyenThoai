@@ -12,13 +12,24 @@ SoundEffect::SoundEffect()
 	walk = nullptr;
 
 	background = nullptr;
+	bossFight = nullptr;
 	victory = nullptr;
 }
 SoundEffect::~SoundEffect()
 {
 	;
 }
-bool SoundEffect::LoadSound(std::string climb_path, std::string crystal_pick_up_path, std::string mana_pick_up_path, std::string jump_path, std::string land_path, std::string fire_path, std::string death_path, std::string walk_path, std::string background_path, std::string victory_path)
+bool SoundEffect::LoadSound(std::string climb_path,
+							std::string crystal_pick_up_path,
+							std::string mana_pick_up_path,
+							std::string jump_path,
+							std::string land_path,
+							std::string fire_path,
+							std::string death_path,
+							std::string walk_path,
+							std::string background_path,
+							std::string boss_fight_path,
+							std::string victory_path)
 {
 	climb = Mix_LoadWAV(climb_path.c_str());
 	if (!climb) return false;
@@ -51,6 +62,10 @@ bool SoundEffect::LoadSound(std::string climb_path, std::string crystal_pick_up_
 	if (!background) return false;
 	Mix_VolumeMusic(90);
 
+	bossFight = Mix_LoadMUS(boss_fight_path.c_str());
+	if (!bossFight) return false;
+	Mix_VolumeMusic(90);
+
 	victory = Mix_LoadMUS(victory_path.c_str());
 	if (!victory) return false;
 
@@ -68,5 +83,6 @@ void SoundEffect::free()
 	Mix_FreeChunk(fire);
 
 	Mix_FreeMusic(background);
+	Mix_FreeMusic(bossFight);
 	Mix_FreeMusic(victory);
 }

@@ -5,9 +5,9 @@ bool init() {
 	bool success = true;
 	// chuan bi moi truong tao cua so, render, am thanh
 	bool ret = (SDL_Init(SDL_INIT_VIDEO) >= 0);
-	ret = (	TTF_Init() != -1 &&
-			Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) != -1 &&
-			Mix_AllocateChannels(16) != -1);
+	ret = (	TTF_Init() != -1 && // khoi tao thu vien TTF
+			Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) != -1 && // khoi tao thu vien am thanh
+			Mix_AllocateChannels(16) != -1); // dat so luong kenh am thanh
 	if (!ret)
 		success = false;
 	else
@@ -54,10 +54,19 @@ bool init() {
 
 	return success;
 }
+// cac bien quan ly tro choi
 GameMap game_map;
 MainObject player;
 StatusBar status_bar;
 SoundEffect sound_effect;
+
+// flags
+bool is_quit = false;
+bool is_start = false;
+bool is_restart = false;
+bool is_pause = false;
+bool is_win = false;
+bool is_lose = false;
 
 bool loadData() {
 	bool ret = game_map.loadMap(screen);
@@ -81,8 +90,10 @@ bool loadData() {
 		screen,
 		"assets\\screen\\statusbar\\background.png",
 		"assets\\screen\\statusbar\\life.png",
+		"assets\\screen\\statusbar\\shield.png",
 		"assets\\screen\\statusbar\\mana.png",
 		"assets\\screen\\statusbar\\minimap.png",
+		"assets\\screen\\statusbar\\restart_button.png",
 		"assets\\screen\\statusbar\\quit_button.png");
 	if (!ret) return false;
 	// load am thanh
@@ -96,6 +107,7 @@ bool loadData() {
 		"assets\\sound\\effect\\death.wav",
 		"assets\\sound\\effect\\step_on_grass.wav",
 		"assets\\sound\\music\\background.mp3",
+		"assets\\sound\\music\\BossFight.mp3",
 		"assets\\sound\\music\\victory.mp3");
 	if (!ret) return false;
 	return true;
@@ -113,45 +125,115 @@ void close() {
 	IMG_Quit();
 	SDL_Quit();
 }
+void restart()
+{
+	if (is_restart)
+	{
+		game_map.clear();
+		player.reset();
+
+		bool ret = game_map.loadMap(screen);
+		if (!ret) return;
+
+		int current_map_index = 1;
+		game_map.setCurrentMap(current_map_index);
+		player.setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+		player.kill(game_map, sound_effect);
+	}
+	is_start = true;
+	is_quit = false;
+	is_restart = false;
+	is_pause = false;
+	is_win = false;
+	is_lose = false;
+}
+
 void start() {
 	if (init() == false) return;				// khoi tao game
-	if (loadData() == false) return;
+	if (loadData() == false) return;            // load map
 
 	Timer fpsControl;
 	
 	sound_effect.playBackground();
-	bool is_quit = false;
 
+	fpsControl.start_count();
 	while (!is_quit) {
-		
+		fpsControl.begin();
+
 		while (SDL_PollEvent(&event) != NULL) { // bat su kien nguoi dung
 			if (event.type == SDL_QUIT)
 				is_quit = true;
 			player.getInput(event, screen, sound_effect);
-			status_bar.getInput(screen, event, is_quit);
+			status_bar.getInput(screen, event, is_quit, is_restart);
+
+			if (event.type == SDL_KEYDOWN)
+			{
+				if (ADMIN) // event.key.keysym.sym >= 0 && event.key.keysym.sym <= 5
+				{
+					switch (event.key.keysym.sym)
+					{
+					case SDLK_0:
+						game_map.setCurrentMap(0);
+						break;
+					case SDLK_1:
+						game_map.setCurrentMap(1);
+						break;
+					case SDLK_2:
+						game_map.setCurrentMap(2);
+						break;
+					case SDLK_3:
+						game_map.setCurrentMap(3);
+						break;
+					case SDLK_4:
+						game_map.setCurrentMap(4);
+						break;
+					case SDLK_5:
+						game_map.setCurrentMap(5);
+						break;
+					case SDLK_r:
+						is_restart = true;
+					}
+					if (event.key.keysym.sym >= 48 && event.key.keysym.sym <= 53)
+						player.setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
+
+				}
+			}
+			if (event.type == SDL_KEYUP)
+			{
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_ESCAPE:
+					is_pause = (is_pause == false);
+				}
+			}
 		}
-		SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, SHOW); // mau nen
-		SDL_RenderClear(screen); // clear man hinh
+		if (is_restart) restart();
+		if (is_win || is_lose)
+		{
+			is_pause = true;
+		}
+		if (!is_pause)
+		{
+			SDL_SetRenderDrawColor(screen, Render_Draw_Color_red, Render_Draw_Color_green, Render_Draw_Color_blue, SHOW); // mau nen
+			SDL_RenderClear(screen); // clear man hinh
 
-		game_map.UpdateHiddenObject();
-		game_map.DrawBackMap(screen); // ve background len man hinh
-		game_map.DrawHiddenObject(screen);
+			game_map.DrawBackMap(screen); // ve background len man hinh
+			game_map.DrawHiddenObject(screen);
+			game_map.update(player.getRect(), screen);
 
-		player.moveBullet(game_map, screen);
-		player.movePlayer(game_map, sound_effect);
-		player.show(screen, sound_effect);
 
-		status_bar.update(screen, player, game_map);
-		
-		game_map.DrawFrontMap(screen);
+			player.moveBullet(game_map, screen);
+			player.movePlayer(game_map, sound_effect);
+			player.show(screen, sound_effect);
+			game_map.DrawFrontMap(screen);
+		}
+		status_bar.update(screen, player, game_map, is_win, is_lose);
 		status_bar.render(screen);
-
+		fpsControl.drawFPS(screen);
 		SDL_RenderPresent(screen); // update lai man hinh
 
 		//gioi han fps
-		int real_time = fpsControl.get_tick();
-		int time_one_frame = 1000 / FPS;
-		if (real_time < time_one_frame)
-			SDL_Delay(time_one_frame - real_time);
+		fpsControl.end();
+		fpsControl.lockFPS(FPS);
 	}
 }

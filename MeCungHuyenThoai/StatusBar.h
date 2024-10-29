@@ -1,4 +1,5 @@
 #pragma once
+
 #include "function.h"
 #include "BaseObject.h"
 #include "MainObject.h"
@@ -16,7 +17,7 @@ private:
 	SDL_Rect rect;
 public:
 	LifeStatus();
-	~LifeStatus();
+	virtual ~LifeStatus();
 	bool loadIcon(std::string filepath, SDL_Renderer* scr);
 	void setRect(const int& x, const int& y);
 	void render(SDL_Renderer* scr);
@@ -29,6 +30,13 @@ class ManaStatus : public LifeStatus
 public:
 	ManaStatus() { ; }
 	~ManaStatus() { ; }
+};
+
+class ShieldStatus : public LifeStatus
+{
+public:
+	ShieldStatus() { ; }
+	~ShieldStatus() { ; }
 };
 
 class CrystalStatus
@@ -56,7 +64,7 @@ private:
 	SDL_Rect map[6];
 public:
 	MiniMap();
-	~MiniMap();
+	virtual ~MiniMap();
 	bool loadMap(SDL_Renderer* scr, std::string cover_path);
 	void update(int current_map_);
 	void setRect(const int& x, const int& y);
@@ -67,12 +75,17 @@ class QuitButton : public BaseObject
 {
 public:
 	QuitButton() { ; }
-	~QuitButton() { ; }
+	virtual ~QuitButton() { ; }
 
 	void getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit);
 	void render(SDL_Renderer* scr);
 };
-
+class RestartButton : public QuitButton
+{
+public:
+	RestartButton() { ; }
+	~RestartButton() { ; }
+};
 class StatusBar
 {
 private:
@@ -84,6 +97,9 @@ private:
 	int life;
 	LifeStatus* LifeBorder;
 
+	int shield;
+	ShieldStatus* ShieldBorder;
+
 	int mana;
 	ManaStatus* ManaBorder;
 
@@ -93,24 +109,28 @@ private:
 	int current_map;
 	MiniMap* mini_map;
 
+	bool is_restart;
+	RestartButton* RestartStatus;
+
 	bool is_quit;
 	QuitButton* QuitStatus;
-
 public:
 	StatusBar();
 	~StatusBar();
-	bool loadimg(SDL_Renderer* scr, std::string background_path, std::string life_icon_path, std::string mana_icon_path, std::string minimap_cover_path, std::string quit_icon_path);
+	bool loadimg(SDL_Renderer* scr, std::string background_path, std::string life_icon_path,std::string shield_icon_path, std::string mana_icon_path, std::string minimap_cover_path, std::string restart_icon_path, std::string quit_icon_path);
 	void setRect(const int& x, const int& y);
-	void update(SDL_Renderer* scr, MainObject& mainChar, GameMap& game_map);
+	void update(SDL_Renderer* scr, MainObject& mainChar, GameMap& game_map, bool &is_win, bool &is_lose);
 	void render(SDL_Renderer* scr);
 
 	void setLife(const int& x) { life = x; }
+	void setShield(const int& x) { shield = x; }
 	void setMana(const int& x) { mana = x; }
 	void setCrystal(std::vector<int> crystal_);
 	void setCurrentMap(int x) { current_map = x; }
 
 	int getLife() { return life; }
+	int getShield() { return shield; }
 	int getMana() { return mana; }
-	void getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit);
+	void getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit, bool & restart);
 	//
 };

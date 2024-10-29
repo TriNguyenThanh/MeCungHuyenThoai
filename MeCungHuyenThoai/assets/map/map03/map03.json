@@ -105,5 +105,47 @@
             "y": 13,
             "name": "mana_bottle"
         }
+    ],
+    "threads":[
+        {
+            "id": 1,
+            "x": 1,
+            "y": 8,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "target": "STRAIGHTLINE",
+            "delay": 15
+        },
+        {
+            "id": 2,
+            "x": 14,
+            "y": 4,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "target": "STRAIGHTLINE",
+            "delay": 15
+        },
+        {
+            "id": 3,
+            "x": 5,
+            "y": 13,
+            "name": "goblin",
+            "move": false,
+            "fire": false
+        },
+        {
+            "id": 4,
+            "x": 25,
+            "y": 3,
+            "name": "bat",
+            "move": true,
+            "dir": "down",
+            "x_des": 25,
+            "y_des": 6,
+            "fire": false
+        }
+
     ]
 }

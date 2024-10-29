@@ -1,39 +1,57 @@
 #include "FpsControl.h"
 
 Timer::Timer() {
-	start_tick = 0;
-	pause_tick = 0;
-	game_pause = false;
-	game_start = true;
+	frame = frame_count = 0;
+	begin_tick = 0;
+	end_tick = 0;
+	old_tick = 0;
+	new_tick = 0;
+	font = nullptr;
+	texture = nullptr;
+	rect_.x = rect_.y = rect_.w = rect_.h = 0;
 }
 Timer::~Timer() {
 
 }
-int Timer::get_tick() {
+void Timer::begin()
+{
+	begin_tick = SDL_GetTicks();
+}
+void Timer::end()
+{
+	end_tick = SDL_GetTicks();
+}
+void Timer::lockFPS(int fps_)
+{
+	Uint32 real_time = end_tick - begin_tick;
+	Uint32 frame_time = 1000 / fps_;
 
-	return start_tick;
+	if (real_time < frame_time)
+		SDL_Delay(frame_time - real_time);
 }
-void Timer::startGame() {
-	game_pause = false;
-	game_start = true;
-	start_tick = SDL_GetTicks();
-}
-void Timer::pauseGame() {
-	if (game_start == true && game_pause == false)
-	game_pause = true;
-	pause_tick = SDL_GetTicks() - start_tick;
-}
-void Timer::unpauseGame()
+void Timer::start_count()
 {
-	if (game_pause == true)
+	font = TTF_OpenFont(UTM_Khuccamta.c_str(), 20);
+	old_tick = SDL_GetTicks();
+}
+void Timer::drawFPS(SDL_Renderer* scr)
+{
+	new_tick = SDL_GetTicks();
+	frame_count++;
+	if (new_tick - old_tick >= 1000)
 	{
-		game_pause = false;
+		frame = frame_count;
+		frame_count = 0;
+		char str[9];
+		sprintf_s(str, "FPS: %d", frame);
+		SDL_Surface* surface = TTF_RenderText_Solid(font, str, GREEN);
+		texture = SDL_CreateTextureFromSurface(scr, surface);
+
+		rect_.x = rect_.y = 10;
+		rect_.w = surface->w;
+		rect_.h = surface->h;
+		old_tick = new_tick;
+		SDL_FreeSurface(surface);
 	}
-}
-void Timer::stopGame()
-{
-	start_tick = 0;
-	pause_tick = 0;
-	game_pause = false;
-	game_start = false;
+	SDL_RenderCopy(scr, texture, nullptr, &rect_);
 }

@@ -1,8 +1,13 @@
 #pragma once
 
 #include "Windows.h"
-#include "iostream"
-#include "string"
+#include <iostream>
+#include <vector>
+#include <string>
+#include <random>
+#include <fstream>
+#include <math.h>
+
 #include "SDL.h"
 #include "SDL_mixer.h"
 #include "SDL_audio.h"
@@ -10,10 +15,10 @@
 #include "SDL_image.h"
 #include "FpsControl.h"
 #include "json.hpp"
-#include <vector>
-#include <fstream>
 
 using JSON = nlohmann::json;
+
+const bool ADMIN = true;
 
 // thong so tile map
 #define TILE_SIZE 64
@@ -51,27 +56,31 @@ const SDL_Color WHITE = { 255, 255, 255 };
 const SDL_Color YELLOW = { 246, 255, 0 };
 
 // FPS control
-#define FPS 60
-#define PAUSE_TIME 1500
+const int FPS = 60;
 
 // thong so cua moi truong
 #define GRAVITY 0.8
 
 // thong so cua nguoi choi
-#define PLAYER_MAX_FALL_SPEED 18
+#define PLAYER_MAX_FALL_SPEED 15
 #define PLAYER_JUMP 12
-#define DASH_SPEED 2
-#define PLAYER_SPEED 3
-#define PLAYER_CLIMB 2
+#define DASH_SPEED  2
+#define PLAYER_SPEED  3
+#define PLAYER_CLIMB  2
 #define CHAR_FRAME 20
 #define FRAME_SPACE 86
 #define RESPAWN_TIME 60
-#define BULLET_SPEED 16
+#define UNDEAD_TIME 90
+#define BULLET_SPEED 13
 #define BULLET_MANA_TAKE 10
-#define MANA_BOTTLE_VALUE 10
+#define MANA_BOTTLE_VALUE1 15
+#define MANA_BOTTLE_VALUE2 20
 
+#define BAT_SPEED 2
+#define MAGMA_BALL_SPEED 12.0
+#define DRAGON_FIRE_SPEED 20.0
 
-
+#define SLOW_FRAME_RENDER 4
 
 struct InputType
 {
@@ -92,3 +101,6 @@ enum walk_type {
 	HIDDEN = 0,
 	SHOW = 255
 };
+
+int ABS(int a);
+int random(int start, int end);
