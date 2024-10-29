@@ -48,6 +48,7 @@ const int Render_Draw_Color_blue = 34;
 
 // text color
 const std::string UTM_Khuccamta = "assets\\screen\\font\\UTM_Khuccamta.ttf";
+const std::string Deutschland = "assets\\screen\\font\\Deutschland.ttf";
 const SDL_Color RED = { 255, 0, 0 };
 const SDL_Color GREEN = { 0, 255, 0 };
 const SDL_Color BLUE = { 0, 0, 255 };

@@ -70,9 +70,8 @@ bool is_lose = false;
 
 bool loadData() {
 	bool ret = game_map.loadMap(screen);
-	if (!ret) return false;
-
-	int current_map_index = 1;
+	if (ret == false) return false;
+	int current_map_index = 4;
 	game_map.setCurrentMap(current_map_index);
 
 	ret = player.loadAction(
