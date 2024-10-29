@@ -24,10 +24,12 @@ private:
 	int dash;
 
 	int life;
+	int shield;
+	int countMana;
+
 	bool died;
 	int respawn;
-
-	int countMana;
+	int undead;
 
 	std::vector<int> crystal;
 	std::vector<int> spawn_crystal;
@@ -40,7 +42,7 @@ private:
 	int frame_hight;
 	SDL_Rect frame_clip[CHAR_FRAME];
 
-	std::vector<Bullet*> bullet_list;
+	std::vector<Bullet* > bullet_list;
 public:
 	MainObject();
 	~MainObject();
@@ -57,9 +59,10 @@ public:
 	void movePlayer(GameMap& game_map, const SoundEffect& effect);
 	void moveBullet(GameMap& game_map, SDL_Renderer* scr);
 	void checkHit(GameMap& game_map, const SoundEffect& effect);
-	void kill(GameMap& game_map, const SoundEffect& effect);
-
+	bool kill(GameMap& game_map, const SoundEffect& effect);
+	void reset();
 	int getLife() const { return life; }
+	int getShield() const { return shield; }
 	int getMana() const { return countMana; }
 	std::vector<int> getcrystal() const { return crystal; }
 };

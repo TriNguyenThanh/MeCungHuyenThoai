@@ -6,14 +6,20 @@ class Timer {
 public:
 	Timer();
 	~Timer();
-	int get_tick();
-	void startGame();
-	void pauseGame();
-	void unpauseGame();
-	void stopGame();
+	void begin();
+	void end();
+	void lockFPS(int fps_);
+	void start_count();
+	void drawFPS(SDL_Renderer* scr);
 private:
-	int start_tick;
-	int pause_tick;
-	bool game_start;
-	bool game_pause;
+	Uint32 begin_tick;
+	Uint32 end_tick;
+
+	TTF_Font* font;
+	SDL_Rect rect_;
+	SDL_Texture* texture;
+	int frame_count;
+	int frame;
+	Uint32 old_tick;
+	Uint32 new_tick;
 };

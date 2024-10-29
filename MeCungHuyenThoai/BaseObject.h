@@ -6,7 +6,7 @@ class BaseObject
 {
 public:
 	BaseObject();
-	~BaseObject();
+	virtual ~BaseObject();
 	void setRect(int x, int y);
 	SDL_Rect getRect();
 	SDL_Texture* getObject();

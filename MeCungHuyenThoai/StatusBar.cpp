@@ -57,7 +57,10 @@ void LifeStatus::update(const int& life_, SDL_Renderer* scr)
 		count = life_;
 		char str[7];
 		sprintf_s(str, "x %d", count);
-		SDL_Surface* surface = TTF_RenderText_Solid(font, str, WHITE);
+		SDL_Color color = WHITE;
+		if (count == 1) color = RED;
+		else if (count == 2) color = YELLOW;
+		SDL_Surface* surface = TTF_RenderText_Solid(font, str, color);
 		if (surface == nullptr) return;
 
 		text_rect.w = surface->w;
@@ -244,8 +247,8 @@ void QuitButton::getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit)
 		SDL_GetMouseState(&mouse.x, &mouse.y);
 		float x, y;
 		SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
-		mouse.x = x;
-		mouse.y = y;
+		mouse.x = (int) x;
+		mouse.y = (int) y;
 		if (rect_.x <= mouse.x && mouse.x <= rect_.x + TILE_SIZE && rect_.y <= mouse.y && mouse.y <= rect_.y + TILE_SIZE)
 		{
 			quit = true;
@@ -258,8 +261,8 @@ void QuitButton::render(SDL_Renderer* scr)
 	SDL_GetMouseState(&mouse.x, &mouse.y);
 	float x, y;
 	SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
-	mouse.x = x;
-	mouse.y = y;
+	mouse.x = (int) x;
+	mouse.y = (int) y;
 	SDL_Rect renderquad = { rect_.x, rect_.y, TILE_SIZE, TILE_SIZE };
 
 	if (rect_.x <= mouse.x && mouse.x <= rect_.x + TILE_SIZE && rect_.y <= mouse.y && mouse.y <= rect_.y + TILE_SIZE)
@@ -279,6 +282,7 @@ StatusBar::StatusBar()
 	rect.w = 768;
 	rect.h = 48;
 	life = 3;
+	shield = 0;
 	mana = 0;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -286,6 +290,7 @@ StatusBar::StatusBar()
 	}
 	current_map = 1;
 	is_quit = false;
+	is_restart = false;
 	background = nullptr;
 	LifeBorder = nullptr;
 	ManaBorder = nullptr;
@@ -303,12 +308,21 @@ void StatusBar::setRect(const int& x, const int& y)
 	rect.y = y;
 
 	LifeBorder->setRect(rect.x + 10, rect.y + 5);
+	ShieldBorder->setRect(rect.x + TILE_SIZE * 2 + 10, rect.y + 5);
 	ManaBorder->setRect(rect.x + TILE_SIZE * 3 + 10, rect.y + 5);
 	CrystalBorder->setRect(rect.x + TILE_SIZE * 6 + 10, rect.y + 5);
 	mini_map->setRect(rect.x + TILE_SIZE * 12 + 10, rect.y + 5);
 }
 
-bool StatusBar::loadimg(SDL_Renderer* scr,std::string background_path, std::string life_icon_path, std::string mana_icon_path, std::string minimap_cover_path, std::string quit_icon_path)
+bool StatusBar::loadimg(
+	SDL_Renderer* scr,
+	std::string background_path, 
+	std::string life_icon_path, 
+	std::string shield_icon_path,
+	std::string mana_icon_path, 
+	std::string minimap_cover_path, 
+	std::string restart_icon_path,
+	std::string quit_icon_path)
 {
 	JSON jsonData;
 	std::ifstream file("assets\\screen\\statusbar\\statusbar.json");
@@ -338,6 +352,15 @@ bool StatusBar::loadimg(SDL_Renderer* scr,std::string background_path, std::stri
 	if (!ret) return false;
 	LifeBorder->setRect(rect.x, rect.y);
 
+	// load chi so khien
+	ShieldBorder = new ShieldStatus;
+	if (ShieldBorder == nullptr) return false;
+
+	ShieldBorder->setFont(font);
+	ret = ShieldBorder->loadIcon(shield_icon_path, scr);
+	if (!ret) return false;
+	ShieldBorder->setRect(rect.x + TILE_SIZE * 3, rect.y);
+
 	// load chi so mana
 	ManaBorder = new ManaStatus;
 	if (ManaBorder == nullptr) return false;
@@ -364,6 +387,15 @@ bool StatusBar::loadimg(SDL_Renderer* scr,std::string background_path, std::stri
 	if (!ret) return false;
 	mini_map->setRect(rect.x + TILE_SIZE * 21, rect.y);
 
+	//load 
+	RestartStatus = new RestartButton;
+	if (RestartStatus == NULL) return false;
+
+	ret = RestartStatus->loadImg(restart_icon_path, scr);
+	if (!ret) return false;
+
+	RestartStatus->setRect(rect.x + TILE_SIZE * 26, rect.y);
+
 	// load quit button
 	QuitStatus = new QuitButton;
 	if (QuitStatus == NULL) return false;
@@ -372,20 +404,41 @@ bool StatusBar::loadimg(SDL_Renderer* scr,std::string background_path, std::stri
 	if (!ret) return false;
 
 	QuitStatus->setRect(rect.x + TILE_SIZE * 28, rect.y);
+
 	return true;
 }
-void StatusBar::update(SDL_Renderer* scr,MainObject& mainChar,GameMap& game_map)
+void StatusBar::update(SDL_Renderer* scr,MainObject& mainChar,GameMap& game_map, bool& is_win, bool& is_lose)
 {
 	life = mainChar.getLife();
+	shield = mainChar.getShield();
 	mana = mainChar.getMana();
 	crystal = mainChar.getcrystal();
 	current_map = game_map.getCurrentMap();
 
 	LifeBorder->update(life, scr);
+	ShieldBorder->update(shield, scr);
 	ManaBorder->update(mana, scr);
 	CrystalBorder->update(crystal, scr);
 	mini_map->update(current_map);
-	
+
+	int i = 0;
+	while (i < crystal.size())
+	{
+		if (crystal[i] == 0) break;
+		i++;
+	}
+	if (i == crystal.size())
+	{
+		is_win = true;
+		is_lose = false;
+		return;
+	}
+	if (life <= 0)
+	{
+		is_lose = true;
+		is_win = false;
+		return;
+	}
 }
 void StatusBar::render(SDL_Renderer* scr)
 {
@@ -393,9 +446,11 @@ void StatusBar::render(SDL_Renderer* scr)
 	SDL_RenderCopy(scr, background, nullptr, &rect);
 	SDL_SetRenderDrawColor(scr, 180, 180, 180, 255);
 	LifeBorder->render(scr);
+	ShieldBorder->render(scr);
 	ManaBorder->render(scr);
 	CrystalBorder->render(scr);
 	mini_map->render(scr);
+	RestartStatus->render(scr);
 	QuitStatus->render(scr);
 }
 void StatusBar::setCrystal(std::vector<int> crystal_)
@@ -405,7 +460,8 @@ void StatusBar::setCrystal(std::vector<int> crystal_)
 		crystal[i] = crystal_[i];
 	}
 }
-void StatusBar::getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit)
+void StatusBar::getInput(SDL_Renderer* scr, SDL_Event evn, bool &quit, bool& restart)
 {
+	RestartStatus->getInput(scr, evn, restart);
 	QuitStatus->getInput(scr, evn, quit);
 }

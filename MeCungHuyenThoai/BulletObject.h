@@ -15,6 +15,8 @@ public:
 	Bullet();
 	~Bullet();
 
+	void render(SDL_Renderer* scr);
+
 	void setXY_val(int x, int y) { x_val = x; y_val = y; }
 	int getX_val() { return x_val; }
 	int getY_val() { return y_val; }
@@ -24,6 +26,6 @@ public:
 	void setMove(const int& x) { is_move = x; }
 	int getMove() { return is_move; }
 
-	void move(GameMap &game_map);
+	void move(GameMap& game_map);
 	void checkHit(GameMap& game_map);
 };

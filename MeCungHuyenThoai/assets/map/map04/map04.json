@@ -105,7 +105,7 @@
             "id": 2,
             "x": 26,
             "y": 2,
-            "name": "violet_mana_crystal"
+            "name": "red_mana_crystal"
         },
         {
             "id": 3,
@@ -136,6 +136,53 @@
             "x": 26,
             "y": 14,
             "name": "mana_bottle"
+        }
+    ],
+    "threads":[
+        {
+            "id": 1,
+            "x": 7,
+            "y": 8,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "delay": 15
+        },
+        {
+            "id": 2,
+            "x": 19,
+            "y": 6,
+            "name": "bat",
+            "move": true,
+            "dir": "down",
+            "x_des": 19,
+            "y_des": 9,
+            "fire": true,
+            "delay":15
+        },
+        {
+            "id": 3,
+            "x": 22,
+            "y": 3,
+            "name": "bat",
+            "move": true,
+            "dir": "down",
+            "x_des": 22,
+            "y_des": 7,
+            "fire": true,
+            "delay":15
+        },
+        {
+            "id": 4,
+            "x": 22,
+            "y": 9,
+            "name": "bat",
+            "move": true,
+            "dir": "down",
+            "x_des": 22,
+            "y_des": 13,
+            "fire": true,
+            "delay":15
         }
     ]
 }

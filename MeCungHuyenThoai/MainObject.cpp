@@ -15,11 +15,14 @@ MainObject::MainObject() {
 	on_ground = false;
 	dash = 0;
 
-	life = 0;
+	life = 5;
+	shield = 0;
+	countMana = 0;
+
 	died = false;
 	respawn = RESPAWN_TIME;
-
-	countMana = 0;
+	undead = UNDEAD_TIME;
+	
 
 	frame = CHAR_FRAME;
 	frame_width = 0;
@@ -42,6 +45,25 @@ MainObject::MainObject() {
 MainObject::~MainObject() {
 
 }
+void MainObject::reset()
+{
+	x_pos = x_spawn;
+	y_pos = y_spawn;
+	respawn = RESPAWN_TIME;
+	for (auto& i : bullet_list)
+	{
+		i->setMove(0);
+	}
+	countMana = 0;
+	life = 6;
+	shield = 0;
+	on_ground = false;
+	status = RIGHT;
+	for (int i = 0; i < 5; i++)
+	{
+		crystal[i] = spawn_crystal[i] = 0;
+	}
+}
 // load hinh anh cho nhan vat
 bool MainObject::loadImg(std::string filepath, SDL_Renderer* scr) {
 	bool ret = BaseObject::loadImg(filepath, scr);
@@ -52,6 +74,8 @@ bool MainObject::loadImg(std::string filepath, SDL_Renderer* scr) {
 	}
 	frame_width = rect_.w / CHAR_FRAME;
 	frame_hight = rect_.h;
+
+	rect_.w = frame_width - (FRAME_SPACE * 2);
 	return ret;
 }
 // load hinh anh cho cac chuyen dong
@@ -96,6 +120,15 @@ void MainObject::show(SDL_Renderer* scr, const SoundEffect& effect) { // Hien th
 	
 	int tmp = 0;
 	frame++;
+	undead--;
+
+	if (undead <= 0)
+	{
+		undead = 0;
+		SDL_SetTextureAlphaMod(object_, 255);
+	}
+	else if (undead > 0)
+		SDL_SetTextureAlphaMod(object_, 100);
 
 	if (!on_ground)
 	{
@@ -134,11 +167,16 @@ void MainObject::show(SDL_Renderer* scr, const SoundEffect& effect) { // Hien th
 		else
 		{
 			died = false;
-			life++;
+			life--;
+			if (life < 0)
+			{
+				;// game over
+			}
 			frame = 0;
 			x_pos = x_spawn;
 			y_pos = y_spawn;
 			respawn = RESPAWN_TIME;
+			undead = UNDEAD_TIME;
 		}
 
 	}
@@ -150,6 +188,12 @@ void MainObject::show(SDL_Renderer* scr, const SoundEffect& effect) { // Hien th
 			effect.playWalk();
 		}
 	}
+	if (input_type.shoot == 1)
+	{
+		angle = 18;
+		//effect.playFire();
+	}
+
 	if (status == LEFT)
 		angle = -angle;
 	SDL_Point point;
@@ -170,9 +214,17 @@ void MainObject::setSpawn(int x, int y) { // dat vi tri hoi sinh cho nhan vat
 		y_pos = rect_.y;
 	}
 }
-void MainObject::kill(GameMap& game_map, const SoundEffect& effect)
+bool MainObject::kill(GameMap& game_map, const SoundEffect& effect)
 {
+	if (undead > 0) return false;
+	if (shield > 0)
+	{
+		undead = UNDEAD_TIME / 4;
+		shield--;
+		return false;
+	}
 	y_val = 0;
+	x_val = 0;
 	if (died == false)
 	{
 		died = true;
@@ -210,7 +262,7 @@ void MainObject::kill(GameMap& game_map, const SoundEffect& effect)
 			break;
 		}
 	}
-	//on_ground = false;
+	return true;
 }
 void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr, const SoundEffect& effect) { // ham bat su kien nguoi dung
 	if (evn.type == SDL_KEYDOWN && died == false) {
@@ -219,18 +271,22 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr, const SoundEffect& e
 			if (countMana >= BULLET_MANA_TAKE && input_type.shoot == 0)
 			{
 				input_type.shoot = 1;
-				effect.playFire();
+				//effect.playFire();
 				// vien dan
 				Bullet* playerBullet = new Bullet;
-				playerBullet->loadImg("assets\\player\\bullet\\blue.png", scr);
-
-				if (status == LEFT)
+				playerBullet->loadImg("assets\\player\\bullet\\orange.png", scr);
+				if (input_type.climb == 1)
+				{
+					playerBullet->setDir(UP);
+					playerBullet->setRect(this->x_pos + (FRAME_SPACE / 2), this->y_pos);
+				}
+				else if (status == LEFT)
 				{
 					// dat huong trai cho vien dan
 					playerBullet->setDir(LEFT);
 					playerBullet->setRect(this->x_pos, this->y_pos + 50);
 				}
-				else
+				else if (status == RIGHT)
 				{
 					// dat huong phai cho vien dan
 					playerBullet->setDir(RIGHT);
@@ -302,6 +358,13 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr, const SoundEffect& e
 			input_type.left = 0;
 			updateImg(idle);
 			break;
+		case SDLK_k:
+			if (ADMIN)
+			{
+				shield++;
+				countMana += 15;
+			}
+			break;
 		}
 	}
 }
@@ -314,10 +377,8 @@ void MainObject::moveBullet(GameMap& game_map, SDL_Renderer* scr)
 		{
 			if (playerBullet->getMove() == 1)
 			{
-				SDL_RendererFlip flip = SDL_FLIP_NONE;
-				if (playerBullet->getDir() == LEFT) flip = SDL_FLIP_HORIZONTAL;
 				playerBullet->move(game_map);
-				playerBullet->render(scr, nullptr, flip);
+				playerBullet->render(scr);
 			}
 			else
 			{
@@ -334,18 +395,18 @@ void MainObject::moveBullet(GameMap& game_map, SDL_Renderer* scr)
 }
 void MainObject::movePlayer(GameMap &game_map, const SoundEffect& effect) {
 	x_val = 0;
-	y_val += GRAVITY; // Nhan vat luon chiu tac dung cua trong luc nen y_val += gravity
-	if (y_val > PLAYER_MAX_FALL_SPEED) y_val = PLAYER_MAX_FALL_SPEED;
+	y_val += (float) GRAVITY; // Nhan vat luon chiu tac dung cua trong luc nen y_val += gravity
+	if (y_val > PLAYER_MAX_FALL_SPEED) y_val = (float) PLAYER_MAX_FALL_SPEED;
 
 	if (input_type.right == 1) {
-		x_val = (PLAYER_SPEED + dash); // nhan vat di sang phai thi tang x
+		x_val = (float) (PLAYER_SPEED + dash); // nhan vat di sang phai thi tang x
 	}
 	else if (input_type.left == 1) {
-		x_val = -(PLAYER_SPEED + dash); // nhan vat di sang trai thi giam x
+		x_val = (float) - (PLAYER_SPEED + dash); // nhan vat di sang trai thi giam x
 	}
 	if (input_type.jump == 1) {
 		if (on_ground == true) {
-			y_val = -(PLAYER_JUMP + dash); // nhan vat nhay thi tang do cao cho nhan vat
+			y_val = (float) - (PLAYER_JUMP + dash); // nhan vat nhay thi tang do cao cho nhan vat
 			effect.playJump();
 		}
 		on_ground = false;
@@ -354,16 +415,17 @@ void MainObject::movePlayer(GameMap &game_map, const SoundEffect& effect) {
 	if (died == true)
 	{
 		x_val = 0;
-		y_val += GRAVITY;
-		if (y_val > PLAYER_MAX_FALL_SPEED) y_val = PLAYER_MAX_FALL_SPEED;
+		y_val += (float) GRAVITY;
+		if (y_val > PLAYER_MAX_FALL_SPEED) y_val = (float) PLAYER_MAX_FALL_SPEED;
 	}
 	checkHit(game_map, effect); // kiem tra va cham
 
 	// Cap nhat lai vi tri
-	x_pos += x_val;
-	y_pos += y_val;
+	x_pos += (int) roundf(x_val);
+	y_pos += (int) roundf(y_val);
 
 	// dich chuyen sang map khac
+	int old_map_index = game_map.getCurrentMap();
 	if ((x_pos + (FRAME_SPACE / 4 * 3)) < 0) {
 		game_map.setCurrentMap(game_map.getCurrentMap() - 1);
 		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
@@ -402,18 +464,46 @@ void MainObject::movePlayer(GameMap &game_map, const SoundEffect& effect) {
 		}
 		y_pos = MAX_MAP_Y * TILE_SIZE - frame_hight;
 	}
+	int new_map_index = game_map.getCurrentMap();
+	if (new_map_index != old_map_index)
+	{
+		if (new_map_index == 5)
+		{
+
+			Mix_HaltMusic();
+			effect.playBossFight();
+		}
+		else if (old_map_index == 5)
+		{
+			Mix_HaltMusic();
+			effect.playBackground();
+		}
+	}
+
 }
-void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
+void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect)
+{
+	for (auto& i : game_map.getMap().threads_list)
+	{
+		if (i->isLive())
+		{
+			if (i->checkRectHit(game_map.getMap().tile, rect_)) // va cham truc tiep voi quai
+			{
+				if (kill(game_map, effect))
+					return;
+			}
+		}
+	}
+
 	MapObject mapData = game_map.getMap();
 	int x1 = 0, x2 = 0;
 	int y1 = 0, y2 = 0;
-
 	
 	x1 = (x_pos + FRAME_SPACE) / TILE_SIZE;
 	x2 = (x_pos + frame_width - FRAME_SPACE) / TILE_SIZE;
 
-	y1 = (y_pos + 25 + y_val) / TILE_SIZE;
-	y2 = (y_pos + y_val + frame_hight - 1) / TILE_SIZE;
+	y1 = (y_pos + 25 + (int) roundf(y_val)) / TILE_SIZE;
+	y2 = (y_pos + (int) roundf(y_val) + frame_hight - 1) / TILE_SIZE;
 
 	// kiem tra va cham tren duoi
 	if (x1 >= 0 && x2 < MAX_MAP_X && y1 >= 0 && y2 < MAX_MAP_Y)
@@ -424,20 +514,19 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 			y_val = -PLAYER_CLIMB;
 			if (!Mix_Playing(15))
 				effect.playClimb();
-		}	
-
+		}
 		// nhan vat huong len tren
 		if (y_val < 0) {
 			// va cham voi block
 
 			bool left = (mapData.tile[y1][x1] == 0 || mapData.tile[y1][x1] == 2);
 			bool right = (mapData.tile[y1][x2] == 0 || mapData.tile[y1][x2] == 2);
-
-
+			
 			if (!left || !right) {
-				
 				// va cham voi block an
-				if (mapData.tile[y1][x1] == 4 || mapData.tile[y1][x2] == 4 || mapData.tile[y1][x1] == 5 || mapData.tile[y1][x2] == 5)
+				if (mapData.tile[y1][x1] == 4 || mapData.tile[y1][x2] == 4 ||
+					mapData.tile[y1][x1] == 5 || mapData.tile[y1][x2] == 5 ||
+					mapData.tile[y1][x1] == 7 || mapData.tile[y1][x2] == 7)
 				{
 					for (const auto& block : game_map.getMap().hidden_block_list)
 					{
@@ -445,8 +534,8 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 						{
 							if (block->isHarm())
 							{
-								kill(game_map, effect);
-								return;
+								if (kill(game_map, effect))
+									return;
 							}
 							if (block->is_show())
 							{
@@ -466,7 +555,9 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 							item_->loot();
 							if (item_->is_name("mana_bottle"))
 							{
-								countMana += MANA_BOTTLE_VALUE;
+								countMana += MANA_BOTTLE_VALUE1;
+								effect.playManaPickUp();
+								life++;
 							}
 							else if (item_->is_name("blue_mana_crystal"))
 							{
@@ -495,25 +586,26 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 				}
 				else
 				{
-					y_val = 0;
-					
+					y_val = (float) 0;
 				}
 				// va cham voi gai tinh
 				if (mapData.tile[y1][x1] == 3 || mapData.tile[y1][x2] == 3)
 				{
-					kill(game_map, effect);
-					return;
+					if (kill(game_map, effect))
+						return;
 				}
 			}
 		}
 		// nhan vat huong xuong
 		else if (y_val > 0) {
 			// va cham voi block
+			
 			bool left = (mapData.tile[y2][x1] == 0 || mapData.tile[y2][x1] == 2);
 			bool right = (mapData.tile[y2][x2] == 0 || mapData.tile[y2][x2] == 2);
-
 			if (!left || !right) {
-				if (mapData.tile[y2][x1] == 4 || mapData.tile[y2][x2] == 4 || mapData.tile[y2][x1] == 5 || mapData.tile[y2][x2] == 5)
+				if (mapData.tile[y2][x1] == 4 || mapData.tile[y2][x2] == 4 ||
+					mapData.tile[y2][x1] == 5 || mapData.tile[y2][x2] == 5 ||
+					mapData.tile[y2][x1] == 7 || mapData.tile[y2][x2] == 7)
 				{
  					for (const auto& block : game_map.getMap().hidden_block_list)
 					{
@@ -521,12 +613,12 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 						{
 							if (block->isHarm())
 							{
-								kill(game_map, effect);
-								return;
+								if (kill(game_map, effect))
+									return;
 							}
 							if (block->is_show())
 							{
-								y_pos = y2 * TILE_SIZE - frame_hight - 2;
+								y_pos = y2 * TILE_SIZE - frame_hight - 1;
 								y_val = 0;
 								if (on_ground == false)
 								{
@@ -555,7 +647,8 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 							block->loot();
 							if (block->is_name("mana_bottle"))
 							{
-								countMana += MANA_BOTTLE_VALUE;
+								countMana += MANA_BOTTLE_VALUE1;
+								life++;
 								effect.playManaPickUp();
 							}
 							else
@@ -588,7 +681,19 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 				}
 				else
 				{
-					y_val = 0;
+					y_val = (float) 0;
+					if (mapData.tile[y2 - 1][x1] == 5 || mapData.tile[y2 - 1][x2] == 5)
+					{
+						for (const auto& block : game_map.getMap().hidden_block_list)
+						{
+							if (block->is_at(x1, y2-1) || block->is_at(x2, y2-1))
+								if (block->isHarm())
+								{
+									if (kill(game_map, effect))
+										return;
+								}
+						}
+					}
 					if (on_ground == false)
 					{
 						on_ground = true;
@@ -604,20 +709,20 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 				}
 				if (mapData.tile[y2][x1] == 3 && mapData.tile[y2][x2] == 3)
 				{
-					kill(game_map, effect);
-					return;
+					if (kill(game_map, effect))
+						return;
 				}
 			}
 		}
 	}
 	// kiem tra va cham hai ben
-	x1 = (x_pos +  FRAME_SPACE + x_val)/TILE_SIZE;
-	x2 = (x_pos +  frame_width - FRAME_SPACE + x_val) / TILE_SIZE;
+	x1 = (x_pos +  FRAME_SPACE + (int) roundf(x_val))/TILE_SIZE;
+	x2 = (x_pos +  frame_width - FRAME_SPACE + (int) roundf(x_val)) / TILE_SIZE;
 
 	y1 = (y_pos + 25) / TILE_SIZE;
 	y2 = (y_pos + frame_hight - 1) / TILE_SIZE;
 	if (input_type.interact == 1) {
-		x1 = (x_pos + FRAME_SPACE + x_val) / TILE_SIZE;
+		x1 = (x_pos + FRAME_SPACE + (int) roundf(x_val)) / TILE_SIZE;
 	}
 	if (x1 >= 0 && x2 < MAX_MAP_X && y1 >= 0 && y2 < MAX_MAP_Y) {
 		// Nhan vat di qua phai
@@ -637,8 +742,9 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 							block->loot();
 							if (block->is_name("mana_bottle"))
 							{
-								countMana += MANA_BOTTLE_VALUE;
+								countMana += MANA_BOTTLE_VALUE1;
 								effect.playManaPickUp();
+								life++;
 							}
 							else
 							{
@@ -668,22 +774,27 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 						}
 					}
 				}
-				else if (mapData.tile[y1][x2] == 4 || mapData.tile[y2][x2] == 4)
+				else if (mapData.tile[y1][x2] == 4 || mapData.tile[y2][x2] == 4 || mapData.tile[y1][x2] == 7 || mapData.tile[y2][x2] == 7)
 				{
 					for (const auto& block : game_map.getMap().hidden_block_list)
 					{
 						if ((block->is_at(x2, y1) || block->is_at(x2, y2)) && block->is_show())
 						{
-							x_val = 0;
-							x_pos = (x1 * TILE_SIZE) - x_val - FRAME_SPACE;
+							if (block->isHarm())
+							{
+								if (kill(game_map, effect))
+									return;
+							}
+							x_val = (float) 0;
+							x_pos = (x1 * TILE_SIZE) - (int) roundf(x_val) - FRAME_SPACE;
 							break;
 						}
 					}
 				}
 				else
 				{
-					x_val = 0;
-					x_pos = (x1 * TILE_SIZE) - x_val - FRAME_SPACE;
+					x_val = (float) 0;
+					x_pos = (x1 * TILE_SIZE) - (int) roundf(x_val) - FRAME_SPACE;
 				}
 			}
 		}
@@ -692,7 +803,6 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 			
 			bool up = (mapData.tile[y1][x1] == 0 || mapData.tile[y1][x1] == 2 || mapData.tile[y1][x1] == 5 || mapData.tile[y1][x1] == 4);
 			bool down = (mapData.tile[y2][x1] == 0 || mapData.tile[y2][x1] == 2 || mapData.tile[y2][x1] == 5);
-
 
 			if (!up || !down)
 			{
@@ -705,8 +815,9 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 							block->loot();
 							if (block->is_name("mana_bottle"))
 							{
-								countMana += MANA_BOTTLE_VALUE;
+								countMana += MANA_BOTTLE_VALUE1;
 								effect.playManaPickUp();
+								life++;
 							}
 							else
 							{
@@ -736,22 +847,27 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 						}
 					}
 				}
-				else if (mapData.tile[y1][x1] == 4 || mapData.tile[y2][x1] == 4)
+				else if (mapData.tile[y1][x1] == 4 || mapData.tile[y2][x1] == 4 || mapData.tile[y1][x1] == 7 || mapData.tile[y2][x1] == 7)
 				{
 					for (const auto& block : game_map.getMap().hidden_block_list)
 					{
 						if ((block->is_at(x1, y1) && block->is_show()) || (block->is_at(x1, y2) && block->is_show()))
 						{
-							x_val = 0;
-							x_pos = ((x1 + 1) * TILE_SIZE) + x_val - FRAME_SPACE;
+							if (block->isHarm())
+							{
+								if (kill(game_map, effect))
+									return;
+							}
+							x_val = (float) 0;
+							x_pos = ((x1 + 1) * TILE_SIZE) + (int) roundf(x_val) - FRAME_SPACE;
 							break;
 						}
 					}
 				}
 				else
 				{
-					x_val = 0;
-					x_pos = ((x1 + 1) * TILE_SIZE) + x_val - FRAME_SPACE;
+					x_val = (float) 0;
+					x_pos = ((x1 + 1) * TILE_SIZE) + (int) roundf(x_val) - FRAME_SPACE;
 				}
 			}
 		}
@@ -759,11 +875,11 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 		else
 		{
 			if (status == LEFT)
-				x_val = -(PLAYER_SPEED + dash);
-			else x_val = (PLAYER_SPEED + dash);
+				x_val = (float) - (PLAYER_SPEED + dash);
+			else x_val = (float) (PLAYER_SPEED + dash);
 
-			x1 = (x_pos + x_val + FRAME_SPACE) / TILE_SIZE;
-			x2 = (x_pos + x_val + frame_width - FRAME_SPACE) / TILE_SIZE;
+			x1 = (x_pos + (int) roundf(x_val) + FRAME_SPACE) / TILE_SIZE;
+			x2 = (x_pos + (int) roundf(x_val) + frame_width - FRAME_SPACE) / TILE_SIZE;
 
 			y1 = (y_pos + 25) / TILE_SIZE;
 			y2 = (y_pos + frame_hight - 1) / TILE_SIZE;
@@ -778,7 +894,6 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 				}
 				if (block->is_at(x2, y2) && block->is_show())
 				{
-					
 					if (block->is_static() && input_type.interact == 1)
 					{
 						block->chanceStatus();
@@ -786,7 +901,6 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 				}
 				if (block->is_at(x1, y1) && block->is_show())
 				{
-
 					if (block->is_static() && input_type.interact == 1)
 					{
 						block->chanceStatus();
@@ -801,8 +915,7 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect) {
 					}
 				}
 			}
-			x_val = 0;
+			x_val = (float) 0;
 		}
-
 	}
 }

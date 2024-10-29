@@ -1,15 +1,15 @@
 {
     "spawn":
     {
-        "x" : 1,
-        "y" : 13
+        "x" : 3,
+        "y" : 9
     },
     "HiddenBlock" : [
         {
             "id" : 1,
             "name" : "rock",
             "x" : 20,
-            "y" : 12,
+            "y" : 13,
             "harm" : false,
             "time" : 0,
             "period_time" : 0,
@@ -71,15 +71,50 @@
     "items":[
         {
             "id": 1,
-            "x": 19,
-            "y": 9,
+            "x": 18,
+            "y": 12,
             "name": "mana_bottle"
         },
         {
             "id": 2,
             "x": 26,
-            "y": 14,
-            "name": "red_mana_crystal"
+            "y": 13,
+            "name": "violet_mana_crystal"
         }
-    ]
+    ],
+    "threads":[
+        {
+            "id": 1,
+            "x": 24,
+            "y": 1,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "delay": 50
+        },
+        {
+            "id": 2,
+            "x": 24,
+            "y": 5,
+            "name": "cobren",
+            "move": false,
+            "fire": true,
+            "delay": 50
+        },
+        {
+            "id": 3,
+            "x": 3,
+            "y": 0,
+            "name": "dragon",
+            "move": true,
+            "dir": "right",
+            "x_des": 22,
+            "y_des": 0,
+            "fire": true,
+            "delay": 30,
+            "maxHP": 6,
+            "shield": 600,
+            "heal": 600
+        }
+    ]    
 }

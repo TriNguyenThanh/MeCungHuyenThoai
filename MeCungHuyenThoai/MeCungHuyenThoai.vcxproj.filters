@@ -35,6 +35,15 @@
     <ClCompile Include="Sound.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="ThreadObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadBulletObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseObject.h">
@@ -71,6 +80,15 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="Sound.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadBulletObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>
