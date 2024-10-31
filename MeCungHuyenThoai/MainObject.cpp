@@ -15,7 +15,7 @@ MainObject::MainObject() {
 	on_ground = false;
 	dash = 0;
 
-	life = 5;
+	life = 6;
 	shield = 0;
 	countMana = 0;
 
@@ -57,8 +57,25 @@ void MainObject::reset()
 	countMana = 0;
 	life = 6;
 	shield = 0;
+	dash = 0;
 	on_ground = false;
 	status = RIGHT;
+	for (int i = 0; i < 5; i++)
+	{
+		crystal[i] = spawn_crystal[i] = 0;
+	}
+}
+void MainObject::setToWin()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		crystal[i] = spawn_crystal[i] = 255;
+	}
+}
+void MainObject::setToLose()
+{
+	life = 0;
+	countMana = 0;
 	for (int i = 0; i < 5; i++)
 	{
 		crystal[i] = spawn_crystal[i] = 0;
@@ -302,9 +319,6 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr, const SoundEffect& e
 				bullet_list.push_back(playerBullet);
 			}
 			break;
-		case SDLK_LSHIFT:
-			dash = DASH_SPEED;
-			break;
 		case SDLK_w:
 			input_type.climb = 1;
 			break;
@@ -339,7 +353,8 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr, const SoundEffect& e
 		switch (evn.key.keysym.sym)
 		{
 		case SDLK_LSHIFT:
-			dash = 0;
+			if (dash == 0) dash = DASH_SPEED;
+			else dash = 0;
 			break;
 		case SDLK_j:
 			input_type.shoot = 0;
@@ -357,13 +372,6 @@ void MainObject::getInput(SDL_Event evn, SDL_Renderer* scr, const SoundEffect& e
 		case SDLK_a:
 			input_type.left = 0;
 			updateImg(idle);
-			break;
-		case SDLK_k:
-			if (ADMIN)
-			{
-				shield++;
-				countMana += 15;
-			}
 			break;
 		}
 	}
@@ -444,7 +452,7 @@ void MainObject::movePlayer(GameMap &game_map, const SoundEffect& effect) {
 		}
 		x_pos = 10;
 	}
-	else if (y_pos + frame_hight > SCREEN_HIGHT)
+	else if (y_pos + (frame_hight / 2) > SCREEN_HIGHT)
 	{
 		game_map.setCurrentMap(game_map.getCurrentMap() + 3);
 		this->setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);
@@ -467,11 +475,14 @@ void MainObject::movePlayer(GameMap &game_map, const SoundEffect& effect) {
 	int new_map_index = game_map.getCurrentMap();
 	if (new_map_index != old_map_index)
 	{
-		if (new_map_index == 5)
+		if (new_map_index == 5 && old_map_index == 4)
 		{
 
 			Mix_HaltMusic();
 			effect.playBossFight();
+			shield += life - 1;
+			life = 1;
+
 		}
 		else if (old_map_index == 5)
 		{
@@ -540,6 +551,7 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect)
 							if (block->is_show())
 							{
 								y_val = 0;
+								on_ground = false;
 							}
 							break;
 						}
@@ -800,7 +812,6 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect)
 		}
 		// Nhan vat di qua trai
 		else if (x_val < 0) {
-			
 			bool up = (mapData.tile[y1][x1] == 0 || mapData.tile[y1][x1] == 2 || mapData.tile[y1][x1] == 5 || mapData.tile[y1][x1] == 4);
 			bool down = (mapData.tile[y2][x1] == 0 || mapData.tile[y2][x1] == 2 || mapData.tile[y2][x1] == 5);
 
@@ -810,7 +821,7 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect)
 				{
 					for (const auto& block : game_map.getMap().items_list)
 					{
-						if ((block->is_at(x1, y1) || block->is_at(x1, y1)) && block->is_show())
+						if ((block->is_at(x1, y1) || block->is_at(x1, y2)) && block->is_show())
 						{
 							block->loot();
 							if (block->is_name("mana_bottle"))
@@ -874,6 +885,12 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect)
 		// nhan vat dung yen
 		else
 		{
+			if (input_type.interact != 1) return;
+			for (int i = 0; i < 4; ++i)
+			{
+				if (crystal[i] == 0) return;
+			}
+
 			if (status == LEFT)
 				x_val = (float) - (PLAYER_SPEED + dash);
 			else x_val = (float) (PLAYER_SPEED + dash);
@@ -883,6 +900,9 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect)
 
 			y1 = (y_pos + 25) / TILE_SIZE;
 			y2 = (y_pos + frame_hight - 1) / TILE_SIZE;
+
+			x_val = (float)0;
+
 			for (const auto& block : game_map.getMap().hidden_block_list)
 			{
 				if (block->is_at(x2, y1) && block->is_show())
@@ -915,7 +935,7 @@ void MainObject::checkHit(GameMap& game_map, const SoundEffect& effect)
 					}
 				}
 			}
-			x_val = (float) 0;
+			
 		}
 	}
 }

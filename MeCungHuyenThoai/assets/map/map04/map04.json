@@ -156,7 +156,7 @@
             "move": true,
             "dir": "down",
             "x_des": 19,
-            "y_des": 9,
+            "y_des": 11,
             "fire": true,
             "delay":15
         },
@@ -175,12 +175,12 @@
         {
             "id": 4,
             "x": 22,
-            "y": 9,
+            "y": 8,
             "name": "bat",
             "move": true,
             "dir": "down",
             "x_des": 22,
-            "y_des": 13,
+            "y_des": 12,
             "fire": true,
             "delay":15
         }

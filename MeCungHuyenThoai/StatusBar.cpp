@@ -154,7 +154,7 @@ void CrystalStatus::render(SDL_Renderer* scr)
 	SDL_Point mouse;
 	SDL_GetMouseState(&mouse.x, &mouse.y);
 
-	if (rect.x <= mouse.x && mouse.x <= rect.x + TILE_SIZE && rect.y <= mouse.y && mouse.y <= rect.y + TILE_SIZE)
+	if (rect.x <= mouse.x && mouse.x <= rect.x + renderquad.w && rect.y <= mouse.y && mouse.y <= rect.y + renderquad.h)
 	{
 		SDL_SetRenderDrawColor(scr, 195, 195, 195, 255);
 		SDL_RenderFillRect(scr, &renderquad);

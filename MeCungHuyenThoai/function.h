@@ -18,8 +18,6 @@
 
 using JSON = nlohmann::json;
 
-const bool ADMIN = true;
-
 // thong so tile map
 #define TILE_SIZE 64
 #define TILE_COUNT 20
@@ -48,7 +46,8 @@ const int Render_Draw_Color_blue = 34;
 
 // text color
 const std::string UTM_Khuccamta = "assets\\screen\\font\\UTM_Khuccamta.ttf";
-const std::string Deutschland = "assets\\screen\\font\\Deutschland.ttf";
+const std::string SpeedRush = "assets\\screen\\font\\SpeedRush_JRKVB.ttf";
+const std::string SpeedRushItalic = "assets\\screen\\font\\SpeedRushItalic_GOYoa.ttf";
 const SDL_Color RED = { 255, 0, 0 };
 const SDL_Color GREEN = { 0, 255, 0 };
 const SDL_Color BLUE = { 0, 0, 255 };
@@ -60,7 +59,7 @@ const SDL_Color YELLOW = { 246, 255, 0 };
 const int FPS = 60;
 
 // thong so cua moi truong
-#define GRAVITY 0.8
+#define GRAVITY 0.7
 
 // thong so cua nguoi choi
 #define PLAYER_MAX_FALL_SPEED 15
@@ -72,14 +71,14 @@ const int FPS = 60;
 #define FRAME_SPACE 86
 #define RESPAWN_TIME 60
 #define UNDEAD_TIME 90
-#define BULLET_SPEED 13
+#define BULLET_SPEED 11
 #define BULLET_MANA_TAKE 10
 #define MANA_BOTTLE_VALUE1 15
 #define MANA_BOTTLE_VALUE2 20
 
 #define BAT_SPEED 2
-#define MAGMA_BALL_SPEED 12.0
-#define DRAGON_FIRE_SPEED 20.0
+#define MAGMA_BALL_SPEED 11.0
+#define DRAGON_FIRE_SPEED 18.0
 
 #define SLOW_FRAME_RENDER 4
 
