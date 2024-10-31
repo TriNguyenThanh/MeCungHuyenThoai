@@ -119,13 +119,11 @@
         },
         {
             "id": 2,
-            "x": 14,
+            "x": 12,
             "y": 4,
-            "name": "cobren",
+            "name": "goblin",
             "move": false,
-            "fire": true,
-            "target": "STRAIGHTLINE",
-            "delay": 15
+            "fire": false
         },
         {
             "id": 3,

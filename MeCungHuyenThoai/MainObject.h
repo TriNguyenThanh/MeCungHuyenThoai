@@ -47,6 +47,9 @@ public:
 	MainObject();
 	~MainObject();
 
+	void setToWin();
+	void setToLose();
+
 	bool loadImg(std::string filepath, SDL_Renderer* scr);
 	bool loadAction(SDL_Renderer* scr, std::string idle_filepath, std::string run_filepath, std::string jump_filepath);
 	void updateImg(SDL_Texture* action);

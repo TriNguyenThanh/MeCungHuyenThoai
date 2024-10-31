@@ -12,8 +12,8 @@
             "y" : 4,
             "harm" : false,
             "time" : 0,
-            "period_time" : 150,
-            "status" : 0
+            "period_time" : 0,
+            "status" : 255
         },
         {
             "id" : 2,
@@ -21,8 +21,8 @@
             "x" : 16,
             "y" : 6,
             "harm" : false,
-            "time" : 75,
-            "period_time" : 150,
+            "time" : 45,
+            "period_time" : 90,
             "status" : 255
         },
         {
@@ -32,7 +32,7 @@
             "y" : 8,
             "harm" : false,
             "time" : 0,
-            "period_time" : 150,
+            "period_time" : 90,
             "status" : 0
         },
         {
@@ -42,7 +42,7 @@
             "y" : 9,
             "harm" : false,
             "time" : 0,
-            "period_time" : 150,
+            "period_time" : 90,
             "status" : 0
         },
         {
@@ -51,8 +51,8 @@
             "x" : 10,
             "y" : 10,
             "harm" : false,
-            "time" : 75,
-            "period_time" : 150,
+            "time" : 45,
+            "period_time" : 90,
             "status" : 255
         },
         {
@@ -62,7 +62,7 @@
             "y" : 12,
             "harm" : false,
             "time" : 0,
-            "period_time" : 150,
+            "period_time" : 90,
             "status" : 0
         },
         {
@@ -72,7 +72,7 @@
             "y" : 12,
             "harm" : false,
             "time" : 0,
-            "period_time" : 150,
+            "period_time" : 90,
             "status" : 0
         },
         {
@@ -81,8 +81,8 @@
             "x" : 16,
             "y" : 12,
             "harm" : false,
-            "time" : 75,
-            "period_time" : 150,
+            "time" : 0,
+            "period_time" : 0,
             "status" : 255
         }
     ],
@@ -111,16 +111,6 @@
             "id": 1,
             "x": 1,
             "y": 4,
-            "name": "cobren",
-            "move": false,
-            "fire": true,
-            "target": "STRAIGHTLINE",
-            "delay": 15
-        },
-        {
-            "id": 2,
-            "x": 1,
-            "y": 8,
             "name": "cobren",
             "move": false,
             "fire": true,

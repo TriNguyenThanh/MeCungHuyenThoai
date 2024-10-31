@@ -6,12 +6,13 @@ class SoundEffect
 public:
 	SoundEffect();
 	~SoundEffect();
-	bool LoadSound(std::string climb_path, std::string crystal_pick_up_path, std::string mana_pick_up_path, std::string jump_path, std::string land_path, std::string fire_path, std::string death_path, std::string walk_path, std::string background_path, std::string boss_fight_path, std::string victory_path);
+	bool LoadSound(std::string climb_path, std::string crystal_pick_up_path, std::string mana_pick_up_path, std::string jump_path, std::string land_path, std::string fire_path, std::string death_path, std::string walk_path, std::string background_path, std::string boss_fight_path, std::string victory_path, std::string defeat_path);
 	void free();
 	void playChunk(Mix_Chunk* tmp) const { Mix_PlayChannel(-1, tmp, 0); }
 	void playBackground() const { Mix_PlayMusic(background, -1); }
 	void playBossFight() const { Mix_PlayMusic(bossFight, -1); }
 	void playVictory() const { Mix_PlayMusic(victory, -1); }
+	void playDefeat() const { Mix_PlayMusic(defeat, -1); }
 	void playJump() const { Mix_PlayChannel(-1, jump, 0); }
 	void playCrystalPickUp() const { Mix_PlayChannel(-1, crystal_pick_up, 0); }
 	void playManaPickUp() const { Mix_PlayChannel(-1, mana_pick_up, 0); }
@@ -34,4 +35,5 @@ private:
 	Mix_Music* background;
 	Mix_Music* bossFight;
 	Mix_Music* victory;
+	Mix_Music* defeat;
 };
