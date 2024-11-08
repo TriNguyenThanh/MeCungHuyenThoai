@@ -35,28 +35,19 @@ void HiddenObject::set(bool harm_, int status_, int time_, int period_time_)
 }
 void HiddenObject::update()
 {
-	if (period_time == 0)
-	{
+	if (period_time == 0){
 		if (status == SHOW) object_ = show_texture;
 		else object_ = hidden_texture;
 		return;
 	}
-	if (status == SHOW)
-	{
-		time--;
-	}
-	else
-	{
-		time++;
-	}
+	if (status == SHOW) time--;
+	else time++;
 
-	if (time == 0)
-	{
+	if (time == 0){
 		status = HIDDEN;
 		object_ = hidden_texture;
 	}
-	else if (time == period_time / 2)
-	{
+	else if (time == period_time / 2){
 		status = SHOW;
 		object_ = show_texture;
 	}

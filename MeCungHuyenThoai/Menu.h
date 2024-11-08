@@ -43,13 +43,3 @@ private:
 	TTF_Font* font2;
 	int button_size;
 };
-
-class GameMenu {
-private:
-	bool quit;
-	bool start;
-	bool pause;
-	bool lose;
-	bool win;
-public:
-};
