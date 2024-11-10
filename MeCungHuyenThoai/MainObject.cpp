@@ -81,6 +81,11 @@ void MainObject::setToLose()
 		crystal[i] = spawn_crystal[i] = 0;
 	}
 }
+void MainObject::getMoreMana()
+{
+	countMana += 10;
+	shield++;
+}
 // load hinh anh cho nhan vat
 bool MainObject::loadImg(std::string filepath, SDL_Renderer* scr) {
 	bool ret = BaseObject::loadImg(filepath, scr);
