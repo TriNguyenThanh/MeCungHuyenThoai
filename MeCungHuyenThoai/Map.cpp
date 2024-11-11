@@ -186,3 +186,31 @@ void Menu::render(SDL_Renderer* scr)
 		SDL_RenderCopy(scr, button2_texture, 0, &button2);
 	}
 }
+void Menu::click(SDL_Renderer* scr, SDL_Event evn, bool& button1_, bool& button2_)
+{
+	if (evn.type == SDL_MOUSEBUTTONDOWN && evn.button.button == SDL_BUTTON_LEFT)
+	{
+		//button1
+		SDL_Point mouse;
+		SDL_GetMouseState(&mouse.x, &mouse.y);
+		float x, y;
+		SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+		mouse.x = (int)x;
+		mouse.y = (int)y;
+
+		if (button1.x <= mouse.x && mouse.x <= button1.x + button1.w && button1.y <= mouse.y && mouse.y <= button1.y + button1.h)
+			button1_ = true;
+
+		// button2
+		if (button2_text != "none")
+		{
+			SDL_GetMouseState(&mouse.x, &mouse.y);
+			SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+			mouse.x = (int)x;
+			mouse.y = (int)y;
+
+			if (button2.x <= mouse.x && mouse.x <= button2.x + button2.w && button2.y <= mouse.y && mouse.y <= button2.y + button2.h)
+				button2_ = true;
+		}
+	}
+}
