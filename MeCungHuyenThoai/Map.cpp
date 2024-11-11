@@ -21,3 +21,13 @@ Menu::Menu()
 
 	button1_is_hover = button2_is_hover = false;
 }
+Menu::~Menu()
+{
+	;
+}
+void Menu::setText(std::string title_, std::string button1_, std::string button2_)
+{
+	title_text = title_;
+	button1_text = button1_;
+	button2_text = button2_;
+}
