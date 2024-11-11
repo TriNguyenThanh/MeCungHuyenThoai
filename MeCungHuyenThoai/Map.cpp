@@ -36,3 +36,21 @@ void Menu::setFontSize(int title_, int button_)
 	title_size = title_;
 	button_size = button_;
 }
+void Menu::setRect(
+	int title_x, int title_y,
+	int button1_x, int button1_y,
+	int button2_x, int button2_y)
+{
+	run_bg_rect.x = run_bg_rect.y = 0;
+	run_bg_rect.w = SCREEN_WIDTH;
+	run_bg_rect.h = SCREEN_HIGHT;
+
+	title.x = title_x;
+	title.y = title_y;
+
+	button1.x = button1_x;
+	button1.y = button1_y;
+
+	button2.x = button2_x;
+	button2.y = button2_y;
+}
