@@ -124,3 +124,31 @@ void Menu::update()
 		if (run_bg_rect.x > SCREEN_WIDTH) run_bg_rect.x = 0;
 	}
 }
+void Menu::hover(SDL_Renderer* scr)
+{
+	//button1
+	SDL_Point mouse;
+	SDL_GetMouseState(&mouse.x, &mouse.y);
+	float x, y;
+	SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+	mouse.x = (int)x;
+	mouse.y = (int)y;
+
+	if (button1.x <= mouse.x && mouse.x <= button1.x + button1.w && button1.y <= mouse.y && mouse.y <= button1.y + button1.h)
+		button1_is_hover = true;
+	else button1_is_hover = false;
+
+
+	// button2
+	if (button2_text != "none")
+	{
+		SDL_GetMouseState(&mouse.x, &mouse.y);
+		SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+		mouse.x = (int)x;
+		mouse.y = (int)y;
+
+		if (button2.x <= mouse.x && mouse.x <= button2.x + button2.w && button2.y <= mouse.y && mouse.y <= button2.y + button2.h)
+			button2_is_hover = true;
+		else button2_is_hover = false;
+	}
+}
