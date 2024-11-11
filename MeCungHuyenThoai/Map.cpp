@@ -31,3 +31,8 @@ void Menu::setText(std::string title_, std::string button1_, std::string button2
 	button1_text = button1_;
 	button2_text = button2_;
 }
+void Menu::setFontSize(int title_, int button_)
+{
+	title_size = title_;
+	button_size = button_;
+}
