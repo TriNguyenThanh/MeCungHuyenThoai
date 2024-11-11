@@ -116,3 +116,11 @@ bool Menu::loadImg(std::string file1, std::string file2, std::string file3, std:
 
 	return true;
 }
+void Menu::update()
+{
+	if (run_bg_texture)
+	{
+		run_bg_rect.x++;
+		if (run_bg_rect.x > SCREEN_WIDTH) run_bg_rect.x = 0;
+	}
+}
