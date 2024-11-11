@@ -23,26 +23,19 @@ SDL_Texture* BaseObject::getObject() {
 }
 //load file anh len object
 bool BaseObject::loadImg(std::string filepath, SDL_Renderer* screen) {
-	//tao moi texture
-	SDL_Texture* new_texture = NULL;					
-	// load file hinh len texture
-	SDL_Surface* surface = IMG_Load(filepath.c_str());     
+	SDL_Texture* new_texture = NULL;			//tao moi texture			
+	SDL_Surface* surface = IMG_Load(filepath.c_str());     	// load file hinh len texture
 
 	if (surface != NULL) {
-		// Xoa nen file anh
-		SDL_SetColorKey(surface, SDL_TRUE, BACKGROUND_COLOR); 
-		// chuyen doi surface sang texture
-		new_texture = SDL_CreateTextureFromSurface(screen, surface); 
-		// lay thong so cho khung hinh
-		if (new_texture != NULL) { 
+		SDL_SetColorKey(surface, SDL_TRUE, BACKGROUND_COLOR); 		// Xoa nen file anh
+		new_texture = SDL_CreateTextureFromSurface(screen, surface); 		// chuyen doi surface sang texture
+		if (new_texture != NULL) { 		// lay thong so cho khung hinh
 			rect_.w = surface->w;
 			rect_.h = surface->h;
 		}
-		// giai phong vung nho
-		SDL_FreeSurface(surface); 
+		SDL_FreeSurface(surface); 		// giai phong vung nho
 	}
-	// xoa vung nho cua texture hien tai
-	SDL_DestroyTexture(object_);
+	SDL_DestroyTexture(object_);	// xoa vung nho cua texture hien tai
 	object_ = new_texture;
 
 	return object_ != NULL;

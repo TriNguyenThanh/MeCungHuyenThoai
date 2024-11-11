@@ -274,6 +274,9 @@ void start() {
 						case SDLK_y:
 							player.setToWin();
 							break;
+						case SDLK_u:
+							player.getMoreMana();
+							break;
 						}
 						if (event.key.keysym.sym >= 48 && event.key.keysym.sym <= 53)
 							player.setSpawn(game_map.getMap().spawn_x * TILE_SIZE, game_map.getMap().spawn_y * TILE_SIZE);

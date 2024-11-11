@@ -1,253 +1,216 @@
-#include "Map.h"
+#include "Menu.h"
 
-GameMap::GameMap() {
-	currentMapIndex = 1;
-	is_boss_died = false;
+Menu::Menu()
+{
+	menu_texture = nullptr;
+	bg_texture = nullptr;
+	run_bg_texture = nullptr;
+	title_texture = nullptr;
+	button1_texture = nullptr;
+	button2_texture = nullptr;
+
+	font1 = font2 = nullptr;
+
+	title_text = button1_text = button2_text = "none";
+	title_size = button_size = 0;
+
+	run_bg_rect.x = run_bg_rect.y = run_bg_rect.w = run_bg_rect.h = 0;
+	title.x = title.y = title.w = title.h = 0;
+	button1.x = button1.y = button1.w = button1.h = 0;
+	button2.x = button2.y = button2.w = button2.h = 0;
+
+	button1_is_hover = button2_is_hover = false;
 }
-GameMap::~GameMap() {
-
+Menu::~Menu()
+{
+	;
 }
-bool GameMap::loadMap(SDL_Renderer* scr) {
+void Menu::setText(std::string title_, std::string button1_, std::string button2_)
+{
+	title_text = title_;
+	button1_text = button1_;
+	button2_text = button2_;
+}
+void Menu::setFontSize(int title_, int button_)
+{
+	title_size = title_;
+	button_size = button_;
+}
+void Menu::setRect(
+	int title_x, int title_y,
+	int button1_x, int button1_y,
+	int button2_x, int button2_y)
+{
+	run_bg_rect.x = run_bg_rect.y = 0;
+	run_bg_rect.w = SCREEN_WIDTH;
+	run_bg_rect.h = SCREEN_HIGHT;
 
-	char file_name[40];
-	for (int i = 0; i < 6; ++i) {
+	title.x = title_x;
+	title.y = title_y;
 
-		// load background layer
-		sprintf_s(file_name, "assets\\map\\map0%d\\bg%02d.png", i, i);
-		bool ret = maplist[i].background.loadImg(file_name, scr);
-		if (ret == false) return false;
-		maplist[i].start_x = 0;
-		maplist[i].start_y = 0;
-		maplist[i].background.setRect(maplist[i].start_x, maplist[i].start_y);
+	button1.x = button1_x;
+	button1.y = button1_y;
 
-		// load descoration layer
-		sprintf_s(file_name, "assets\\map\\map0%d\\desco%02d.png", i, i);
-		ret = maplist[i].descoration.loadImg(file_name, scr);
-		if (ret == false) return false;
-		maplist[i].descoration.setRect(maplist[i].start_x, maplist[i].start_y);
+	button2.x = button2_x;
+	button2.y = button2_y;
+}
+bool Menu::loadImg(std::string file1, std::string file2, std::string file3, std::string file4, SDL_Renderer* scr)
+{
+	SDL_Surface* surface = IMG_Load(file1.c_str());
+	if (!surface) return false;
+	menu_texture = SDL_CreateTextureFromSurface(scr, surface);
+	if (!menu_texture) return false;
 
-		// load ground layer
-		sprintf_s(file_name, "assets\\map\\map0%d\\ground%02d.png", i, i);
-		ret = maplist[i].ground.loadImg(file_name, scr);
-		if (ret == false) return false;
-		maplist[i].ground.setRect(maplist[i].start_x, maplist[i].start_y);
+	SDL_FreeSurface(surface);
 
-		// load tile map
-		sprintf_s(file_name, "assets\\map\\map0%d\\map%02d.dat", i, i);
-		std::ifstream file_tilemap(file_name);
-		if (!file_tilemap) return false;
-		for (int y = 0; y < MAX_MAP_Y; ++y) {
-			for (int x = 0; x < MAX_MAP_X; ++x) {
-				file_tilemap >> maplist[i].tile[y][x];
-			}
-		}
-		file_tilemap.close();
+	surface = IMG_Load(file2.c_str());
+	if (!surface) return false;
+	bg_texture = SDL_CreateTextureFromSurface(scr, surface);
+	if (!bg_texture) return false;
 
-		// load file json
-		sprintf_s(file_name, "assets\\map\\map0%d\\map%02d.json", i, i);
-		std::ifstream file_json(file_name);
-		if (!file_json) return false;
-		JSON jsonData;
-		file_json >> jsonData;
-		file_json.close();
+	SDL_FreeSurface(surface);
 
-		maplist[i].spawn_x = jsonData["spawn"]["x"];
-		maplist[i].spawn_y = jsonData["spawn"]["y"];
-
-		std::string hidden_rock = "assets\\envairoment\\hidden_rock.png";
-		std::string show_rock = "assets\\envairoment\\show_rock.png";
-		std::string hidden_thorn = "assets\\envairoment\\hidden_thorn.png";
-		std::string show_thorn = "assets\\envairoment\\show_thorn.png";
-
-		for (const auto& block : jsonData["HiddenBlock"])
-		{
-			HiddenObject* tmp = nullptr;
-			if (block["name"] == "thorn")
-			{
-				tmp = new ThornBlock;
-				tmp->loadImg(hidden_thorn, show_thorn, scr);
-			}
-			else
-			{
-				tmp = new RockBlock;
-				tmp->loadImg(hidden_rock, show_rock, scr);
-			}
-			tmp->setRect(block["x"] * TILE_SIZE, block["y"] * TILE_SIZE);
-			tmp->set(block["harm"], block["status"], block["time"], block["period_time"]);
-
-			if (block.contains("angle")) tmp->setAngle(block["angle"]);
-			if (block.contains("flip"))
-			{
-				if (block["flip"] == "HORIZONE") tmp->setFlip(SDL_FLIP_HORIZONTAL);
-				else tmp->setFlip(SDL_FLIP_VERTICAL);
-			}
-			maplist[i].hidden_block_list.push_back(tmp);
-		}
-
-		for (const auto& block : jsonData["items"])
-		{
-			Item* tmp = new Item;
-			std::string name = block["name"];
-			if (name == "mana_bottle")
-			{
-				tmp->loadImg("assets\\item\\mana.png", scr);
-			}
-			else
-			{
-				sprintf_s(file_name, "assets\\item\\%s.png", name.c_str());
-				bool ret = tmp->loadImg(file_name, scr);
-				if (!ret) return false;
-			}
-			tmp->setRect(block["x"] * TILE_SIZE, block["y"] * TILE_SIZE);
-			tmp->setName(name);
-
-			maplist[i].items_list.push_back(tmp);
-		}
-
-		for (const auto& mob : jsonData["threads"])
-		{
-			bool ret = true;
-			std::string name = mob["name"];
-			std::string dragon = "dragon";
-			Threads* thread = nullptr;
-			if (name == dragon)
-			{
-				thread = new Boss;
-				thread->setHP(mob["maxHP"]);
-				thread->setHeal(mob["heal"]);
-				thread->setShield(mob["shield"]);
-			}
-			else 
-				thread = new Threads;
-			thread->setName(name);
-			bool move_ = mob["move"];
-			bool fire_ = mob["fire"];
-			thread->setMove(move_);
-			thread->setFire(fire_);
-			if (mob.contains("target"))
-			{
-				std::string target_type = mob["target"];
-				thread->setTarget(target_type);
-			}
-			if (name == "cobren")
-			{
-				thread->setFrame(12);
-				thread->setFireDelay(50);
-				ret = thread->loadImg("assets\\enermies\\cobren.png", scr,
-										"assets\\enermies\\cobren_attack.png");
-			}
-			else if (name == "bat")
-			{
-				thread->setFrame(9);
-				ret = thread->loadImg("assets\\enermies\\bat.png", scr);
-			}	
-			else if (name == "goblin")
-			{
-				thread->setFrame(8);
-				ret = thread->loadImg("assets\\enermies\\goblin.png", scr);
-			}
-			else if (name == "dragon")
-			{
-				thread->setFrame(9);
-				thread->setFireDelay(30);
-				ret = thread->loadImg("assets\\enermies\\dragon.png", scr,
-										"assets\\enermies\\dragon_attack.png");
-			}
-			if (!ret) return false;
-			thread->setClip();
-			if (move_)
-			{
-				std::string dir = mob["dir"];
-				if (dir == "down") thread->setMoveDir(DOWN);
-				else if (dir == "up") thread->setMoveDir(UP);
-				else if (dir == "right") thread->setMoveDir(RIGHT);
-				else if (dir == "left") thread->setMoveDir(LEFT);
-				thread->setDes(mob["x_des"] * TILE_SIZE, mob["y_des"] * TILE_SIZE);
-			}
-
-			thread->setSpawn(mob["x"] * TILE_SIZE, mob["y"] * TILE_SIZE);
-			thread->spawn();
-			thread->setRect(mob["x"]*TILE_SIZE, mob["y"]*TILE_SIZE);
-			maplist[i].threads_list.push_back(thread);
-		}
+	if (file3 != "none")
+	{
+		surface = IMG_Load(file3.c_str());
+		if (!surface) return false;
+		run_bg_texture = SDL_CreateTextureFromSurface(scr, surface);
+		if (!menu_texture) return false;
 	}
+	font1 = TTF_OpenFont(file4.c_str(), title_size);
+	font2 = TTF_OpenFont(file4.c_str(), button_size);
+
+	if (!font1 || !font2) return false;
+	if (title_text != "")
+	{
+		surface = TTF_RenderText_Solid(font1, title_text.c_str(), YELLOW);
+		if (!surface) return false;
+		title.w = surface->w;
+		title.h = surface->h;
+		title_texture = SDL_CreateTextureFromSurface(scr, surface);
+		if (!title_texture) return false;
+
+		SDL_FreeSurface(surface);
+	}
+
+	surface = TTF_RenderText_Solid(font2, button1_text.c_str(), GREEN);
+	if (!surface) return false;
+	button1.w = surface->w;
+	button1.h = surface->h;
+	button1_texture = SDL_CreateTextureFromSurface(scr, surface);
+	if (!button1_texture) return false;
+
+	SDL_FreeSurface(surface);
+
+	if (button2_text != "none")
+	{
+		surface = TTF_RenderText_Solid(font2, button2_text.c_str(), RED);
+		if (!surface) return false;
+		button2.w = surface->w;
+		button2.h = surface->h;
+		button2_texture = SDL_CreateTextureFromSurface(scr, surface);
+		if (!button2_texture) return false;
+
+		SDL_FreeSurface(surface);
+	}
+
 	return true;
 }
-void GameMap::clear()
+void Menu::update()
 {
-	setCurrentMap(1);
-	is_boss_died = false;
-	for (int i = 0; i < 6; ++i)
+	if (run_bg_texture)
 	{
-		maplist[i].background.free();
-		maplist[i].descoration.free();
-		maplist[i].ground.free();
+		run_bg_rect.x++;
+		if (run_bg_rect.x > SCREEN_WIDTH) run_bg_rect.x = 0;
+	}
+}
+void Menu::hover(SDL_Renderer* scr)
+{
+	//button1
+	SDL_Point mouse;
+	SDL_GetMouseState(&mouse.x, &mouse.y);
+	float x, y;
+	SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+	mouse.x = (int)x;
+	mouse.y = (int)y;
 
-		maplist[i].threads_list.clear();
-		maplist[i].hidden_block_list.clear();
-		maplist[i].items_list.clear();
+	if (button1.x <= mouse.x && mouse.x <= button1.x + button1.w && button1.y <= mouse.y && mouse.y <= button1.y + button1.h)
+		button1_is_hover = true;
+	else button1_is_hover = false;
+
+
+	// button2
+	if (button2_text != "none")
+	{
+		SDL_GetMouseState(&mouse.x, &mouse.y);
+		SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+		mouse.x = (int)x;
+		mouse.y = (int)y;
+
+		if (button2.x <= mouse.x && mouse.x <= button2.x + button2.w && button2.y <= mouse.y && mouse.y <= button2.y + button2.h)
+			button2_is_hover = true;
+		else button2_is_hover = false;
 	}
 }
-// ve back ground
-void GameMap::DrawBackMap(SDL_Renderer* des) {
-	maplist[currentMapIndex].background.render(des, NULL);
-	maplist[currentMapIndex].descoration.render(des, NULL);
-}
-// ve ground
-void GameMap::DrawFrontMap(SDL_Renderer* des)
+void Menu::render(SDL_Renderer* scr)
 {
-	for (const auto& item_ : maplist[currentMapIndex].items_list)
+	SDL_Rect renderquad = { 0, 0, SCREEN_WIDTH, SCREEN_HIGHT };
+	SDL_RenderCopy(scr, bg_texture, 0, &renderquad);
+
+	if (run_bg_texture)
 	{
-		item_->render(des);
+		renderquad.w = SCREEN_WIDTH - run_bg_rect.x;
+		SDL_RenderCopy(scr, run_bg_texture, &run_bg_rect, &renderquad);
+
+		SDL_Rect run_bg_rect2 = { 0, 0, run_bg_rect.x, SCREEN_HIGHT };
+		SDL_Rect renderquad2 = { renderquad.w, 0, run_bg_rect2.w, SCREEN_HIGHT };
+		SDL_RenderCopy(scr, run_bg_texture, &run_bg_rect2, &renderquad2);
 	}
-	maplist[currentMapIndex].ground.render(des, NULL);
-	
+	renderquad.x = renderquad.y = 0;
+	renderquad.w = SCREEN_WIDTH;
+	renderquad.h = SCREEN_HIGHT;
+
+	SDL_RenderCopy(scr, menu_texture, 0, &renderquad);
+	if (title_texture)
+		SDL_RenderCopy(scr, title_texture, 0, &title);
+	if (button1_is_hover || button2_is_hover)
+	{
+		SDL_SetRenderDrawColor(scr, 255, 255, 255, 150);
+		if (button1_is_hover)
+			SDL_RenderFillRect(scr, &button1);
+		else SDL_RenderFillRect(scr, &button2);
+	}
+	SDL_RenderCopy(scr, button1_texture, 0, &button1);
+	if (button2_texture)
+	{
+		SDL_RenderCopy(scr, button2_texture, 0, &button2);
+	}
 }
-void GameMap::setCurrentMap(int x) {
-	currentMapIndex = x;
-}
-void GameMap::DrawHiddenObject(SDL_Renderer* des)
+void Menu::click(SDL_Renderer* scr, SDL_Event evn, bool& button1_, bool& button2_)
 {
-	for (const auto& i : maplist[currentMapIndex].threads_list)
+	if (evn.type == SDL_MOUSEBUTTONDOWN && evn.button.button == SDL_BUTTON_LEFT)
 	{
-		i->render(des);
-	}
-	for (const auto& i : maplist[currentMapIndex].hidden_block_list)
-	{
-		i->render(des);
-	}
-}
-void GameMap::update(SDL_Rect mainChar_position, SDL_Renderer* scr) {
-	if (!is_boss_died)
-	{
-		for (const auto& i : maplist[5].threads_list)
+		//button1
+		SDL_Point mouse;
+		SDL_GetMouseState(&mouse.x, &mouse.y);
+		float x, y;
+		SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+		mouse.x = (int)x;
+		mouse.y = (int)y;
+
+		if (button1.x <= mouse.x && mouse.x <= button1.x + button1.w && button1.y <= mouse.y && mouse.y <= button1.y + button1.h)
+			button1_ = true;
+
+		// button2
+		if (button2_text != "none")
 		{
-			Boss* boss = dynamic_cast<Boss*>(i);
-			if (boss)
-			{
-				if (boss->isLive() == false)
-				{
-					is_boss_died = true;
-					for (int i = 0; i < 6; ++i)
-					{
-						for (auto& thread : maplist[i].threads_list)
-						{
-							delete thread;
-							thread = nullptr;
-						}
-						maplist[i].threads_list.clear();
-					}
-				}
-			}
-		}
-	}
-	for (const auto& i : maplist[currentMapIndex].threads_list) i->update(mainChar_position, scr);
-	for (const auto& i : maplist[currentMapIndex].hidden_block_list)
-	{
-		i->update();
-		if (is_boss_died && i->is_X_from_a_to_b(20 * TILE_SIZE, 23 * TILE_SIZE) && i->getStatus() == HIDDEN && currentMapIndex == 5)
-		{
-			i->chanceStatus();
+			SDL_GetMouseState(&mouse.x, &mouse.y);
+			SDL_RenderWindowToLogical(scr, mouse.x, mouse.y, &x, &y);
+			mouse.x = (int)x;
+			mouse.y = (int)y;
+
+			if (button2.x <= mouse.x && mouse.x <= button2.x + button2.w && button2.y <= mouse.y && mouse.y <= button2.y + button2.h)
+				button2_ = true;
 		}
 	}
 }
