@@ -152,3 +152,37 @@ void Menu::hover(SDL_Renderer* scr)
 		else button2_is_hover = false;
 	}
 }
+void Menu::render(SDL_Renderer* scr)
+{
+	SDL_Rect renderquad = { 0, 0, SCREEN_WIDTH, SCREEN_HIGHT };
+	SDL_RenderCopy(scr, bg_texture, 0, &renderquad);
+
+	if (run_bg_texture)
+	{
+		renderquad.w = SCREEN_WIDTH - run_bg_rect.x;
+		SDL_RenderCopy(scr, run_bg_texture, &run_bg_rect, &renderquad);
+
+		SDL_Rect run_bg_rect2 = { 0, 0, run_bg_rect.x, SCREEN_HIGHT };
+		SDL_Rect renderquad2 = { renderquad.w, 0, run_bg_rect2.w, SCREEN_HIGHT };
+		SDL_RenderCopy(scr, run_bg_texture, &run_bg_rect2, &renderquad2);
+	}
+	renderquad.x = renderquad.y = 0;
+	renderquad.w = SCREEN_WIDTH;
+	renderquad.h = SCREEN_HIGHT;
+
+	SDL_RenderCopy(scr, menu_texture, 0, &renderquad);
+	if (title_texture)
+		SDL_RenderCopy(scr, title_texture, 0, &title);
+	if (button1_is_hover || button2_is_hover)
+	{
+		SDL_SetRenderDrawColor(scr, 255, 255, 255, 150);
+		if (button1_is_hover)
+			SDL_RenderFillRect(scr, &button1);
+		else SDL_RenderFillRect(scr, &button2);
+	}
+	SDL_RenderCopy(scr, button1_texture, 0, &button1);
+	if (button2_texture)
+	{
+		SDL_RenderCopy(scr, button2_texture, 0, &button2);
+	}
+}
