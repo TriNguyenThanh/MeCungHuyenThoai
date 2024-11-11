@@ -54,3 +54,65 @@ void Menu::setRect(
 	button2.x = button2_x;
 	button2.y = button2_y;
 }
+bool Menu::loadImg(std::string file1, std::string file2, std::string file3, std::string file4, SDL_Renderer* scr)
+{
+	SDL_Surface* surface = IMG_Load(file1.c_str());
+	if (!surface) return false;
+	menu_texture = SDL_CreateTextureFromSurface(scr, surface);
+	if (!menu_texture) return false;
+
+	SDL_FreeSurface(surface);
+
+	surface = IMG_Load(file2.c_str());
+	if (!surface) return false;
+	bg_texture = SDL_CreateTextureFromSurface(scr, surface);
+	if (!bg_texture) return false;
+
+	SDL_FreeSurface(surface);
+
+	if (file3 != "none")
+	{
+		surface = IMG_Load(file3.c_str());
+		if (!surface) return false;
+		run_bg_texture = SDL_CreateTextureFromSurface(scr, surface);
+		if (!menu_texture) return false;
+	}
+	font1 = TTF_OpenFont(file4.c_str(), title_size);
+	font2 = TTF_OpenFont(file4.c_str(), button_size);
+
+	if (!font1 || !font2) return false;
+	if (title_text != "")
+	{
+		surface = TTF_RenderText_Solid(font1, title_text.c_str(), YELLOW);
+		if (!surface) return false;
+		title.w = surface->w;
+		title.h = surface->h;
+		title_texture = SDL_CreateTextureFromSurface(scr, surface);
+		if (!title_texture) return false;
+
+		SDL_FreeSurface(surface);
+	}
+
+	surface = TTF_RenderText_Solid(font2, button1_text.c_str(), GREEN);
+	if (!surface) return false;
+	button1.w = surface->w;
+	button1.h = surface->h;
+	button1_texture = SDL_CreateTextureFromSurface(scr, surface);
+	if (!button1_texture) return false;
+
+	SDL_FreeSurface(surface);
+
+	if (button2_text != "none")
+	{
+		surface = TTF_RenderText_Solid(font2, button2_text.c_str(), RED);
+		if (!surface) return false;
+		button2.w = surface->w;
+		button2.h = surface->h;
+		button2_texture = SDL_CreateTextureFromSurface(scr, surface);
+		if (!button2_texture) return false;
+
+		SDL_FreeSurface(surface);
+	}
+
+	return true;
+}
